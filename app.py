@@ -2,7 +2,9 @@ import datetime
 import os
 import re
 import textwrap
+from typing import Optional
 
+import sqlalchemy.sql.functions as sqlfuncs
 from dotenv import load_dotenv
 from psycopg2.errors import UniqueViolation
 from slack_bolt import Ack, App, BoltContext
@@ -130,6 +132,7 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
     if not (context.channel_id and context.actor_user_id):
         raise ValueError("something is wrong with `context` variable")
 
+    slack_message_ts = event["ts"]
     text = event["text"]
     expected_message_format = (
         r"<@.+>.*\n"  # ignore the first mention line
@@ -185,7 +188,7 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
             return
 
     user_id, ra_id, ra_name = user_ra_data
-    expected_duration_format = r"(?P<date>.+) (?P<begin_time>.{5})-(?P<end_time>.{5})( 休憩(?P<break_time>.{5}))?$"
+    expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( 休憩(?P<break_time>.{5}))?$"
     date_matched = re.match(pattern=expected_duration_format, string=duration_str)
     if not date_matched or (date_matched and len(date_matched.groups()) < 3):
         client.chat_postEphemeral(
@@ -202,15 +205,15 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
 
     # extract string representations of datetime info
     date_str = date_matched.group("date")
-    begin_time_str = date_matched.group("begin_time")
+    start_time_str = date_matched.group("start_time")
     end_time_str = date_matched.group("end_time")
     break_time_str_or_none = date_matched.group("break_time")
     # convert string to datetime type
     date_format = "%Y/%m/%d %H:%M"
-    begin_dt = datetime.datetime.strptime(f"{date_str} {begin_time_str}", date_format)
+    start_dt = datetime.datetime.strptime(f"{date_str} {start_time_str}", date_format)
     end_dt = datetime.datetime.strptime(f"{date_str} {end_time_str}", date_format)
     duration_time = (
-        datetime.datetime.min + (end_dt - begin_dt)
+        datetime.datetime.min + (end_dt - start_dt)
     ).time()  # convert timedelta to Time
     if break_time_str_or_none:
         # since `time` type has no equivalent to strptime, this dirty workaround is needed...
@@ -224,11 +227,12 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
         try:
             record = TimeCard(
                 ra_id=ra_id,
-                start_time=begin_dt,
+                start_time=start_dt,
                 end_time=end_dt,
                 duration=duration_time,
                 break_duration=break_time,
                 description=description,
+                slack_message_ts=slack_message_ts,
             )
             sess.add(record)
             sess.flush()
@@ -238,7 +242,7 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text="何らかのデータベースエラーにより記録できませんでした。",
+                text=":x: 何らかのデータベースエラーにより記録できませんでした。",
             )
             raise
         else:
@@ -248,11 +252,112 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
                 text=(
                     f":white_check_mark: 勤怠を記録しました。\n"
                     f"RA区分: {ra_name}\n"
-                    f"作業日時: {date_str} {begin_time_str}-{end_time_str}\n"
+                    f"作業日時: {date_str} {start_time_str}-{end_time_str}\n"
                     f"作業時間: {duration_time.hour:02}:{duration_time.minute:02}\n"
                     f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
                     f"作業内容: {description}"
                 ),
+            )
+
+
+@app.event("message")
+def delete_record(event: dict, context: BoltContext, client: WebClient):
+    # check that `context` variable is available
+    if not (context.channel_id and context.actor_user_id):
+        raise ValueError("something is wrong with `context` variable")
+
+    # check that the event is "message_delete" event
+    if "deleted_ts" not in event:
+        return
+
+    deleted_slack_message_ts = event["deleted_ts"]
+    with get_session() as sess:
+        try:
+            record_to_delete = sess.execute(
+                select(TimeCard).where(
+                    TimeCard.slack_message_ts == deleted_slack_message_ts
+                )
+            ).scalar_one_or_none()
+            if not record_to_delete:
+                return  # the deleted message is not a report of work
+            sess.delete(record_to_delete)
+            sess.flush()
+            sess.commit()
+        except Exception:
+            sess.rollback()
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=":x: 何らかのデータベースエラーにより削除できませんでした。",
+            )
+            raise
+        else:
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=f":wastebasket: {record_to_delete.start_time}から{record_to_delete.end_time}の作業記録を削除しました。",
+            )
+
+
+@app.command("/get_working_hours")
+def get_working_hours(
+    ack: Ack, body: dict, client: WebClient, command: dict, context: BoltContext
+):
+    ack()
+
+    # check that `context` variable is available
+    if not (context.channel_id and context.actor_user_id):
+        raise ValueError("something is wrong with `context` variable")
+
+    year_month = command["text"].strip()
+    if year_month:
+        matched = re.match(
+            pattern=r"(?P<year>\d{4})/(?P<month>\d{2})", string=year_month
+        )
+        if not matched:
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=":x: `/get_working_hours 2023/11` のように実行してください。",
+            )
+            return
+        date = datetime.date(
+            year=int(matched.group("year")),
+            month=int(matched.group("month")),
+            day=1,  # "day" is a dummy value
+        )
+    else:
+        date = datetime.date.today()
+
+    with get_session() as sess:
+        # added type hint since SQLAlchemy can't infer it
+        working_hours: Optional[datetime.timedelta] = sess.execute(
+            select(sqlfuncs.sum(TimeCard.duration))
+            .join(RA, RA.id == TimeCard.ra_id)
+            .join(User, User.id == RA.user_id)
+            .where(
+                User.slack_user_id == context.actor_user_id,
+                TimeCard.end_time
+                >= datetime.date(year=date.year, month=date.month, day=1),
+                TimeCard.end_time
+                < datetime.date(year=date.year, month=date.month + 1, day=1),
+            )
+        ).scalar()
+
+        if working_hours:
+            working_hours_datetime: datetime.time = (
+                datetime.datetime.min + working_hours
+            ).time()  # convert timedelta to time
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=f':pencil: {year_month if year_month else "今月"}の稼働時間は{working_hours_datetime.strftime("%H:%M")}です。',
+            )
+        else:
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
             )
 
 
