@@ -1,4 +1,6 @@
+import csv
 import datetime
+import io
 import os
 import re
 import textwrap
@@ -187,7 +189,7 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
             )
             return
 
-    user_id, ra_id, ra_name = user_ra_data
+    user_id, ra_id, ra_name = user_ra_data._tuple()
     expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( 休憩(?P<break_time>.{5}))?$"
     date_matched = re.match(pattern=expected_duration_format, string=duration_str)
     if not date_matched or (date_matched and len(date_matched.groups()) < 3):
@@ -250,7 +252,7 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
                 channel=context.channel_id,
                 user=context.actor_user_id,
                 text=(
-                    f":white_check_mark: 勤怠を記録しました。\n"
+                    f":white_check_mark: 作業を記録しました。\n"
                     f"RA区分: {ra_name}\n"
                     f"作業日時: {date_str} {start_time_str}-{end_time_str}\n"
                     f"作業時間: {duration_time.hour:02}:{duration_time.minute:02}\n"
@@ -311,21 +313,15 @@ def get_working_hours(
 
     year_month = command["text"].strip()
     if year_month:
-        matched = re.match(
-            pattern=r"(?P<year>\d{4})/(?P<month>\d{2})", string=year_month
-        )
-        if not matched:
+        try:
+            date = datetime.datetime.strptime(year_month, "%Y/%m")
+        except ValueError:  # `year_month` was in invalid format
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
                 text=":x: `/get_working_hours 2023/11` のように実行してください。",
             )
             return
-        date = datetime.date(
-            year=int(matched.group("year")),
-            month=int(matched.group("month")),
-            day=1,  # "day" is a dummy value
-        )
     else:
         date = datetime.date.today()
 
@@ -359,6 +355,98 @@ def get_working_hours(
             user=context.actor_user_id,
             text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
         )
+
+
+@app.command("/download_csv")
+def download_csv(
+    ack: Ack, body: dict, client: WebClient, command: dict, context: BoltContext
+):
+    ack()
+
+    # check that `context` variable is available
+    if not (context.channel_id and context.actor_user_id):
+        raise ValueError("something is wrong with `context` variable")
+
+    year_month = command["text"].strip()
+    if year_month:
+        try:
+            date = datetime.datetime.strptime(year_month, "%Y/%m")
+        except ValueError:  # `year_month` was in invalid format
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=":x: `/download_csv 2023/11` のように実行してください。",
+            )
+            return
+    else:
+        date = datetime.date.today()
+
+    # get all records within the specified month
+    with get_session() as sess:
+        records = sess.execute(
+            select(User, RA, TimeCard)
+            .join(RA, RA.id == TimeCard.ra_id)
+            .join(User, User.id == RA.user_id)
+            .where(
+                User.slack_user_id == context.actor_user_id,
+                TimeCard.end_time
+                >= datetime.date(year=date.year, month=date.month, day=1),
+                TimeCard.end_time
+                < datetime.date(year=date.year, month=date.month + 1, day=1),
+            )
+            .order_by(TimeCard.start_time)
+        ).all()
+        if not records:
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
+            )
+            return
+
+    # make CSV file
+    csv_text_as_file = io.StringIO()
+    writer = csv.DictWriter(
+        f=csv_text_as_file,
+        fieldnames=[
+            "ra_name",
+            "date",
+            "start_time",
+            "end_time",
+            "break_time",
+            "description",
+        ],
+    )
+    writer.writeheader()
+    for record in records:
+        _, ra, timecard = record._tuple()
+        writer.writerow(
+            {
+                "ra_name": ra.ra_name,
+                "date": timecard.start_time.strftime("%d"),
+                "start_time": timecard.start_time.strftime("%H%M"),
+                "end_time": timecard.end_time.strftime("%H%M"),
+                "break_time": timecard.break_duration.strftime("%H%M"),
+                "description": timecard.description,
+            }
+        )
+    csv_text = csv_text_as_file.getvalue()
+    csv_text_as_file.close()
+
+    # upload the CSV and send user the URL to it
+    new_csv_file = client.files_upload_v2(
+        channel=context.channel_id,
+        title=f"{date.year}/{date.month}の作業時間",
+        filename=f"{date.year}_{date.month}_working_hours.csv",
+        content=csv_text,
+    )
+
+    file_url = new_csv_file.get("file").get("permalink")  # type:ignore
+    client.chat_postEphemeral(
+        channel=context.channel_id,
+        user=context.actor_user_id,
+        text=f":page_facing_up: {file_url}",
+    )
 
 
 if __name__ == "__main__":
