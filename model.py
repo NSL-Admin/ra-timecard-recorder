@@ -24,7 +24,7 @@ class RA(Base):
     # id will be automatically assigned by the database, so it should not be initialized in the constructor
     id: Mapped[int] = mapped_column(primary_key=True, init=False)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE", onupdate="CASCADE")
+        ForeignKey("botuser.id", ondelete="CASCADE", onupdate="CASCADE")
     )
     ra_name: Mapped[str]
 
