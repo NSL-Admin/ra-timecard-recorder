@@ -44,3 +44,4 @@ class TimeCard(Base):
     duration: Mapped[datetime.time]
     break_duration: Mapped[datetime.time]
     description: Mapped[str]
+    slack_message_ts: Mapped[str]
