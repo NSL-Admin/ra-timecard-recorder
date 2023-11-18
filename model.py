@@ -10,7 +10,7 @@ class Base(DeclarativeBase, MappedAsDataclass):
 
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "botuser"  # table name is changed because "botuser" is a reserved keyword in PostgreSQL
 
     # id will be automatically assigned by the database, so it should not be initialized in the constructor
     id: Mapped[int] = mapped_column(primary_key=True, init=False)
@@ -41,3 +41,4 @@ class TimeCard(Base):
     end_time: Mapped[datetime.datetime] = mapped_column(
         CheckConstraint("end_time > start_time", name="time_integrity")
     )
+    duration: Mapped[datetime.time]
