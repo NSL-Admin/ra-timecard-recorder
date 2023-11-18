@@ -3,7 +3,7 @@
 
 ### My Files ###
 # dotenv file
-.env
+*.env
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
