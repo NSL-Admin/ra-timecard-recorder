@@ -344,21 +344,21 @@ def get_working_hours(
             )
         ).scalar()
 
-        if working_hours:
-            working_hours_datetime: datetime.time = (
-                datetime.datetime.min + working_hours
-            ).time()  # convert timedelta to time
-            client.chat_postEphemeral(
-                channel=context.channel_id,
-                user=context.actor_user_id,
-                text=f':pencil: {year_month if year_month else "今月"}の稼働時間は{working_hours_datetime.strftime("%H:%M")}です。',
-            )
-        else:
-            client.chat_postEphemeral(
-                channel=context.channel_id,
-                user=context.actor_user_id,
-                text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
-            )
+    if working_hours:
+        working_hours_datetime: datetime.time = (
+            datetime.datetime.min + working_hours
+        ).time()  # convert timedelta to time
+        client.chat_postEphemeral(
+            channel=context.channel_id,
+            user=context.actor_user_id,
+            text=f':pencil: {year_month if year_month else "今月"}の稼働時間は{working_hours_datetime.strftime("%H:%M")}です。',
+        )
+    else:
+        client.chat_postEphemeral(
+            channel=context.channel_id,
+            user=context.actor_user_id,
+            text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
+        )
 
 
 if __name__ == "__main__":
