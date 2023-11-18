@@ -12,7 +12,12 @@ from database import get_session
 from model import RA, User
 
 # load secret tokens to environmental variables
-load_dotenv(dotenv_path=".env")
+# THIS MUST BE AT THE TOP OF SOURCE CODE
+if os.path.exists(".slack.env"):
+    load_dotenv(dotenv_path=".slack.env")
+else:
+    print("Skipped loading .slack.env as it doesn't exist.")
+
 # Initialize app with BOT_TOKEN
 app = App(token=os.environ["SLACK_BOT_TOKEN"])
 
@@ -42,8 +47,11 @@ def register_user(
                 name=username,
             )
             sess.add(user)
+            print("ok1")
             sess.flush()
+            print("ok2")
             sess.commit()
+            print("ok3")
         except IntegrityError as e:
             sess.rollback()
             if isinstance(e.orig, UniqueViolation):
@@ -63,7 +71,7 @@ def register_user(
             )
 
 
-@app.command("/registerRA")
+@app.command("/register_ra")
 def register_RA(
     ack: Ack, body: dict, client: WebClient, command: dict, context: BoltContext
 ):
@@ -104,6 +112,12 @@ def register_RA(
                 user=context.actor_user_id,
                 text=f'RA "{ra_name}" を登録しました。',
             )
+
+
+@app.event("app_mention")
+def add_record(event: dict, context: BoltContext, client: WebClient):
+    print(type(client))
+    print(event["text"])
 
 
 if __name__ == "__main__":

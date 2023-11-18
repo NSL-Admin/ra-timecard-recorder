@@ -3,10 +3,18 @@ import signal
 import sys
 import urllib.parse
 
+from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import sessionmaker
 
 from model import Base
+
+# load secret tokens to environmental variables
+# THIS MUST BE AT THE TOP OF SOURCE CODE
+if os.path.exists(".db.env"):
+    load_dotenv(dotenv_path=".db.env")
+else:
+    print("Skipped loading .db.env as it doesn't exist.")
 
 db_url = URL.create(
     drivername="postgresql+psycopg2",
