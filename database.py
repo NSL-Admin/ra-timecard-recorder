@@ -22,6 +22,7 @@ db_url = URL.create(
     password=urllib.parse.quote_plus(os.environ["DB_PASSWORD"]),
     host=os.environ["DB_HOST"],
     database=os.environ["DB_NAME"],
+    query={"sslmode": "disable"},
 )
 
 # define an engine that connects to the database
