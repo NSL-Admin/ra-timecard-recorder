@@ -39,6 +39,7 @@ def register_user(
             user=context.actor_user_id,
             text=":x: `/init <氏名>` のように実行してください。",
         )
+        return
 
     with get_session() as sess:  # with `with` statement, sess.close() is not needed
         try:
@@ -47,11 +48,8 @@ def register_user(
                 name=username,
             )
             sess.add(user)
-            print("ok1")
             sess.flush()
-            print("ok2")
             sess.commit()
-            print("ok3")
         except IntegrityError as e:
             sess.rollback()
             if isinstance(e.orig, UniqueViolation):
@@ -82,6 +80,14 @@ def register_RA(
         raise ValueError("something is wrong with `context` variable")
 
     ra_name = command["text"].strip()
+    if not ra_name:
+        client.chat_postEphemeral(
+            channel=context.channel_id,
+            user=context.actor_user_id,
+            text=":x: `/register_ra <RA区分名>` のように実行してください。",
+        )
+        return
+
     # check that the user is already registered
     with get_session() as sess:
         user = sess.execute(
@@ -110,7 +116,7 @@ def register_RA(
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=f'RA "{ra_name}" を登録しました。',
+                text=f':white_check_mark: RA "{ra_name}" を登録しました。',
             )
 
 
