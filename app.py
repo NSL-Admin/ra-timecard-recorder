@@ -105,7 +105,7 @@ def register_RA(
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=":x: `/init [氏名]` で先にユーザ登録を行ってください。",
+                text=":x: `/init <氏名>` で先にユーザ登録を行ってください。",
             )
             return
 
