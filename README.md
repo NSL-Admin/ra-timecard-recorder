@@ -84,4 +84,15 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 
 ## 本番環境にデプロイするには
 
-TODO
+このリポジトリ内のコードはすぐに[fly.io](https://fly.io)にデプロイ出来るようになっています。
+また、mainリポジトリにPull Requestをマージすることでfly.ioへのデプロイが自動的に行われます。
+
+1. 各種PaaSのコントロールパネルにて、以下の環境変数を設定してください。
+   - DB_USERNAME: PostgreSQLデータベースへアクセスする際のユーザ名
+   - DB_PASSWORD: PostgreSQLデータベースへアクセスする際のパスワード
+   - DB_HOST: PostgreSQLデータベースのホスト名
+   - DB_NAME: PostgreSQLデータベース内のデータベース名
+   - SLACK_APP_TOKEN: Slackアプリのアプリレベルトークン
+   - SLACK_BOT_TOKEN: Slackアプリのボットトークン
+
+2. このリポジトリにすでに置かれているDockerfileをもとにコンテナイメージをビルドし、デプロイしてください。
