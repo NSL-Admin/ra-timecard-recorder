@@ -1,5 +1,7 @@
 # ra-timecard-recorder: Slack Bot that enables RAs to easily record and retrieve timecard.
 
+[![Fly Deploy](https://github.com/NSL-Admin/ra-timecard-recorder/actions/workflows/fly.yml/badge.svg)](https://github.com/NSL-Admin/ra-timecard-recorder/actions/workflows/fly.yml)
+
 ## 概要
 
 RAが勤務を記録し管理する作業を支援するBotです。Slackへの勤務報告メッセージの送信によって勤務がデータベースに記録され、月末にCSV形式でダウンロードすることができます。また、別途提供している[Chrome拡張機能]()を利用することによって、このCSVファイルをもとにMy Wasedaの業務従事内容報告画面で出勤簿を自動入力することが可能です。
@@ -24,10 +26,12 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 • 勤務内容 (例: 学習用データセットの構築)
 ```
 
+<img src="https://github.com/NSL-Admin/ra-timecard-recorder/assets/37496476/7cb9e5b3-f36b-4e2d-943d-833e7374662c" height=60% width=60%>
+
 注意:
 - 勤務時間の行の時刻情報は、時・分ともに2桁ずつ記入してください。
   - :o: 09:04   :x: 9:04
-- 勤務中に休憩をしたときは、勤務時間の後ろに半角スペースを空け、それに続けて `(休憩01:00)` のように記入してください。括弧や"休憩"という文字列はこの通りに入力してください。
+- 勤務中に休憩をしたときは、勤務時間の後ろに半角スペースを空け、それに続けて `休憩01:00` のように記入してください。"休憩"という文字列もこの通りに入力してください。全体で `2023/11/18 21:00-22:00 休憩01:00` のようになります。
 
 ### 勤務時間の確認とCSVファイルのダウンロード
 
