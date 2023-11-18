@@ -42,3 +42,5 @@ class TimeCard(Base):
         CheckConstraint("end_time > start_time", name="time_integrity")
     )
     duration: Mapped[datetime.time]
+    break_duration: Mapped[datetime.time]
+    description: Mapped[str]
