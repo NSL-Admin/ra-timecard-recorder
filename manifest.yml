@@ -1,0 +1,76 @@
+display_information:
+  name: RA timecard recorder
+  description: RAの勤怠を記録し、簡単に確認可能にします
+  background_color: "#001657"
+  long_description: "1. 最初に /init <氏名> を実行し、ユーザ登録を行います\r
+
+    \  例) /init RA太郎\r
+
+    2. 次に /register_ra <RA区分名> を実行し、RA登録を行います\r
+
+    \  例) /register_ra NTTコム\r
+
+    3. 勤怠を記録するときは指定の形式で記入した上でbotをメンションします\r
+
+    \  例)\r
+
+    \  @ra_timecard_recorder\r
+
+    \  - RA太郎\r
+
+    \  - NTTコム\r
+
+    \  - 2023/11/17 14:00-20:00\r
+
+    \  - 実験と評価"
+features:
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: false
+    messages_tab_read_only_enabled: true
+  bot_user:
+    display_name: RA timecard recorder
+    always_online: true
+  slash_commands:
+    - command: /init
+      description: ユーザとして初期登録を行う
+      usage_hint: <氏名>
+      should_escape: false
+    - command: /register_ra
+      description: 新しくRAを登録する
+      usage_hint: <RA区分名>
+      should_escape: false
+    - command: /get_working_hours
+      description: 今月の稼働時間を計算する
+      usage_hint: "[yyyy/mm]"
+      should_escape: false
+    - command: /download_csv
+      description: 作業記録をCSV形式でダウンロード
+      usage_hint: "[yyyy/mm]"
+      should_escape: false
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - chat:write
+      - commands
+      - files:write
+      - groups:history
+      - im:history
+      - mpim:history
+      - groups:read
+      - groups:write
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - message.channels
+      - message.groups
+      - message.im
+      - message.mpim
+  interactivity:
+    is_enabled: true
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false
