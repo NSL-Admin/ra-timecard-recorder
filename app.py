@@ -70,10 +70,11 @@ def register_user(
                 # exceptions other than UniqueViolation
                 raise e
         else:
-            client.chat_postEphemeral(
-                channel=context.channel_id,
-                user=context.actor_user_id,
-                text=f":white_check_mark: {username} さん、ようこそ！ユーザ登録が完了しました。",
+            dm_with_the_user = client.conversations_open(users=context.actor_user_id)
+            client.chat_postMessage(
+                channel=dm_with_the_user["channel"]["id"],
+                text=f":white_check_mark: {username} さん、ようこそ！ユーザ登録が完了しました。\n:rocket: 上の「ホーム」タブを開いて使い方ガイドを読んでください！",
+                mrkdwn=True,
             )
 
 
