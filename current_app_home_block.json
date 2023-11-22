@@ -1,0 +1,113 @@
+{
+    "type": "home",
+    "blocks": [
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "📝 RA Timecard Recorder",
+                "emoji": true
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "使い方ガイドへようこそ！このページではBotの機能のすべてを紹介します！"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*Botを使い始めるには*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "1️⃣ 何よりも最初に *`/init <氏名>`* を実行してください。Botから `<氏名>さん、ようこそ！` というメッセージが来たらユーザ登録は完了です！"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "2️⃣ 次に *`/register_ra <RA区分名>`* を実行してRAの登録をしてください。 `<RA区分名>` はSlack上で勤怠報告を行う際に記載するものと同じになるようにしてください！（例えば \"NTTコム\" や \"基盤A\" など）"
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*勤務を記録するには*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "RA Timecard Recorderをメンションする形で、以下のフォーマットに従ったメッセージを投稿してください！特に時刻のフォーマットに注意してください。 ```\n@RA timecard recorder [任意のコメント(省略可)]\n• 氏名 (例: RA太郎)\n• RA区分名 (例: NTTコム)\n• 勤務時間 (例: 2023/11/18 21:00-22:00)\n• 勤務内容 (例: 学習用データセットの構築)\n```:bulb: 休憩をした場合には、半角スペースに続けて `2023/11/18 15:00-21:00 休憩01:00` のように入力してください。\n正しく入力して送信するとBotから以下のようなメッセージが返ってきます。"
+            }
+        },
+        {
+            "type": "image",
+            "image_url": "https://user-images.githubusercontent.com/37496476/284942797-fe550e8f-e67c-404f-9ff6-b6c4f65d11cd.png",
+            "alt_text": "bot_reply"
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*勤務を削除するには*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "上記で送信したメッセージを削除すると、対応する勤務がBotのデータベースからも削除されます。"
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*勤務実績を確認・取得するには*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "1️⃣（任意） *`/get_working_hours [yyyy/mm]`* を実行すると、 `yyyy/mm` （例えば 2023/11）の勤務時間が表示されます。 `[yyyy/mm]` を省略した場合、今月の勤務時間が表示されます。"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "2️⃣ *`/download_csv [yyyy/mm]`* を実行すると、 `yyyy/mm` （例えば 2023/11）の勤務を記録したCSVファイルが送られてきます。 `[yyyy/mm]` を省略した場合、今月の勤務を記録したファイルが送られてきます。このCSVファイルを、別途提供しているChrome拡張機能の <https://github.com/NSL-Admin/ra-timecard-autofiller|RA Timecard Autofiller> に渡すことでMyWaseda上の勤務入力を自動で行うことができます。"
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "Tips: コマンド実行に伴うBotのメッセージは *コマンド実行者本人にしか表示されない* ため、他の人に通知が行ってしまうことはありません。"
+                }
+            ]
+        }
+    ]
+}
