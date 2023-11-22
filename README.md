@@ -24,11 +24,11 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 @RA timecard recorder [任意のコメント(省略可)]
 • 氏名 (例: RA太郎)
 • RA区分名 (例: NTTコム)
-• 勤務時間 (例: 2023/11/18 21:00-22:00)
+• 勤務時間 (例: 2023/11/18 15:00-21:00)
 • 勤務内容 (例: 学習用データセットの構築)
 ```
 
-<img src="https://github.com/NSL-Admin/ra-timecard-recorder/assets/37496476/7cb9e5b3-f36b-4e2d-943d-833e7374662c" height=60% width=60%>
+<img src="https://github.com/NSL-Admin/ra-timecard-recorder/assets/37496476/fe550e8f-e67c-404f-9ff6-b6c4f65d11cd" height=60% width=60%>
 
 注意:
 - 勤務時間の行の時刻情報は、時・分ともに2桁ずつ記入してください。
