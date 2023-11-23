@@ -70,6 +70,11 @@ def register_user(
                 # exceptions other than UniqueViolation
                 raise e
         else:
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=":email: DMでこのBotからのメッセージを確認してください。",
+            )
             dm_with_the_user = client.conversations_open(users=context.actor_user_id)
             client.chat_postMessage(
                 channel=dm_with_the_user["channel"]["id"],
