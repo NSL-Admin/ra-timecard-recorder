@@ -7,3 +7,6 @@ app = "ra-timecard-recorder"
 primary_region = "nrt"
 kill_signal = "SIGINT"
 kill_timeout = 5
+
+[env]
+TZ = "Asia/Tokyo"
