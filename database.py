@@ -26,7 +26,7 @@ db_url = URL.create(
 )
 
 # define an engine that connects to the database
-engine = create_engine(url=db_url)
+engine = create_engine(url=db_url, pool_pre_ping=True)
 # define a sessionmaker that creates a "session", on which database operations are performed
 get_session = sessionmaker(bind=engine, expire_on_commit=False)
 # create tables related to Base, if they're not present
