@@ -7,6 +7,7 @@ import textwrap
 from typing import Optional
 
 import sqlalchemy.sql.functions as sqlfuncs
+from dateutil import relativedelta
 from dotenv import load_dotenv
 from psycopg2.errors import UniqueViolation
 from slack_bolt import Ack, App, BoltContext
@@ -331,6 +332,7 @@ def get_working_hours(
     else:
         date = datetime.date.today()
 
+    first_day_of_this_month = datetime.date(year=date.year, month=date.month, day=1)
     with get_session() as sess:
         # added type hint since SQLAlchemy can't infer it
         working_hours: Optional[datetime.timedelta] = sess.execute(
@@ -339,10 +341,9 @@ def get_working_hours(
             .join(User, User.id == RA.user_id)
             .where(
                 User.slack_user_id == context.actor_user_id,
+                TimeCard.start_time >= first_day_of_this_month,
                 TimeCard.end_time
-                >= datetime.date(year=date.year, month=date.month, day=1),
-                TimeCard.end_time
-                < datetime.date(year=date.year, month=date.month + 1, day=1),
+                < first_day_of_this_month + relativedelta.relativedelta(months=1),
             )
         ).scalar()
 
@@ -387,6 +388,7 @@ def download_csv(
     else:
         date = datetime.date.today()
 
+    first_day_of_this_month = datetime.date(year=date.year, month=date.month, day=1)
     # get all records within the specified month
     with get_session() as sess:
         records = sess.execute(
@@ -395,10 +397,9 @@ def download_csv(
             .join(User, User.id == RA.user_id)
             .where(
                 User.slack_user_id == context.actor_user_id,
+                TimeCard.start_time >= first_day_of_this_month,
                 TimeCard.end_time
-                >= datetime.date(year=date.year, month=date.month, day=1),
-                TimeCard.end_time
-                < datetime.date(year=date.year, month=date.month + 1, day=1),
+                < first_day_of_this_month + relativedelta.relativedelta(months=1),
             )
             .order_by(TimeCard.start_time)
         ).all()
