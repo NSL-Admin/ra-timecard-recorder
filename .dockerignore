@@ -6,6 +6,9 @@
 # dotenv file
 **/*.env
 
+# utils for development
+**/utils
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 **/__pycache__
