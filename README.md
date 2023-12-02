@@ -48,39 +48,19 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 
 ## ローカル環境で開発を始めるには
 
-1. 以下のようなDockerfileとdocker-compose.ymlを作成し、 `docker compose up` でコンテナを起動してください。
+1. `utils/dev_database` ディレクトリに移動し、`docker compose up -d` を実行してください。PostgreSQLのコンテナが起動し、内部に開発用データベースが作成されます。
 
-    Dockerfile
-    ```
-    FROM postgres
-    ```
-
-    docker-compose.yml
-    ```
-    version: '3'
-    services:
-    db:
-        build: .
-        ports:
-        - 5432:5432
-        environment:
-        POSTGRES_USER: root
-        POSTGRES_PASSWORD: root
-    ```
-
-2. `psql -h localhost -p 5432 -U root` を実行してパスワードに `root` を入力してDBにログインし、 `CREATE TABLE test_db;` を実行して `test_db` という名前のデータベースを作成してください。
-
-3. 以下のような .db.env という名前のファイルを作成してください。
+2. 以下のような .db.env という名前のファイルを作成してください。
 
     .db.env
     ```
     DB_USERNAME=root
     DB_PASSWORD=root
     DB_HOST=localhost
-    DB_NAME=test_db
+    DB_NAME=ra_timecard_recorder_dev_db
     ```
 
-4. リポジトリ内の manifest.yml をもとに[Slackのポータル](https://api.slack.com/apps)にてアプリケーションを作成し、作成したアプリレベルトークンとボットトークンを以下のような .slack.env という名前のファイルに保存してください。
+3. リポジトリ内の `assets/manifest.yml` をもとに[Slackのポータル](https://api.slack.com/apps)にてアプリケーションを作成し、作成したアプリレベルトークンとボットトークンを以下のような .slack.env という名前のファイルに保存してください。
 
     .slack.env
     ```
@@ -88,11 +68,11 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
     SLACK_BOT_TOKEN=xoxb-yyyyyyyyyyyy
     ```
 
-5. PythonからPostgreSQLに接続するために必要となる[psycopgのインストール要件](https://www.psycopg.org/docs/)を満たしているか確認してください。満たしていない場合、6.のpip installが失敗します。
+4. PythonからPostgreSQLに接続するために必要となる[psycopgのインストール要件](https://www.psycopg.org/docs/)を満たしているか確認してください。満たしていない場合、6.のpip installが失敗します。
 
-6. Pythonの仮想環境を作成し、このリポジトリのフォルダで `pip install -r requirements.txt` を実行して必要なライブラリをインストールしてください。
+5. Pythonの仮想環境を作成し、このリポジトリフォルダ直下で `pip install -r requirements.txt` を実行して必要なライブラリをインストールしてください。
 
-7. `python app.py` を実行して開発を始めてください。
+6. `python app.py` を実行して開発を始めてください。
 
 ## 本番環境にデプロイするには
 
