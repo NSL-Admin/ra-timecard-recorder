@@ -2,27 +2,6 @@ display_information:
   name: RA timecard recorder
   description: RAの勤怠を記録し、簡単に確認可能にします
   background_color: "#001657"
-  long_description: "1. 最初に /init <氏名> を実行し、ユーザ登録を行います\r
-
-    \  例) /init RA太郎\r
-
-    2. 次に /register_ra <RA区分名> を実行し、RA登録を行います\r
-
-    \  例) /register_ra NTTコム\r
-
-    3. 勤怠を記録するときは指定の形式で記入した上でbotをメンションします\r
-
-    \  例)\r
-
-    \  @ra_timecard_recorder\r
-
-    \  - RA太郎\r
-
-    \  - NTTコム\r
-
-    \  - 2023/11/17 14:00-20:00\r
-
-    \  - 実験と評価"
 features:
   app_home:
     home_tab_enabled: true
@@ -57,10 +36,12 @@ oauth_config:
       - commands
       - files:write
       - groups:history
-      - im:history
-      - mpim:history
       - groups:read
       - groups:write
+      - im:history
+      - im:write
+      - mpim:history
+      - im:read
 settings:
   event_subscriptions:
     bot_events:
