@@ -1,3 +1,4 @@
+import logging
 import os
 import signal
 import sys
@@ -15,6 +16,10 @@ if os.path.exists(".db.env"):
     load_dotenv(dotenv_path=".db.env")
 else:
     print("Skipped loading .db.env as it doesn't exist.")
+
+# logging settings
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
 db_url = URL.create(
     drivername="postgresql+psycopg2",
