@@ -60,7 +60,7 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
     DB_NAME=ra_timecard_recorder_dev_db
     ```
 
-3. リポジトリ内の manifest.yml をもとに[Slackのポータル](https://api.slack.com/apps)にてアプリケーションを作成し、作成したアプリレベルトークンとボットトークンを以下のような .slack.env という名前のファイルに保存してください。
+3. リポジトリ内の `assets/manifest.yml` をもとに[Slackのポータル](https://api.slack.com/apps)にてアプリケーションを作成し、作成したアプリレベルトークンとボットトークンを以下のような .slack.env という名前のファイルに保存してください。
 
     .slack.env
     ```
