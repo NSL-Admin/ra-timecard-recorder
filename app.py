@@ -1,6 +1,7 @@
 import csv
 import datetime
 import io
+import json
 import os
 import re
 import textwrap
@@ -17,6 +18,7 @@ from slack_sdk.web.client import WebClient
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
+import config
 from database import get_session
 from model import RA, TimeCard, User
 
@@ -52,6 +54,7 @@ def register_user(
 
     with get_session() as sess:  # with `with` statement, sess.close() is not needed
         try:
+            # add the user to the database
             user = User(
                 slack_user_id=context.actor_user_id,
                 name=username,
@@ -59,6 +62,14 @@ def register_user(
             sess.add(user)
             sess.flush()
             sess.commit()
+            # fetch App Home view to publish it to the user
+            if os.path.exists(config.APP_HOME_VIEW_FILEPATH):
+                with open(config.APP_HOME_VIEW_FILEPATH) as viewfile:
+                    app_home_view = json.load(viewfile)
+            else:
+                raise FileNotFoundError(
+                    f"JSON file containing App Home view ({config.APP_HOME_VIEW_FILEPATH}) was not found."
+                )
         except IntegrityError as e:
             sess.rollback()
             if isinstance(e.orig, UniqueViolation):
@@ -71,6 +82,8 @@ def register_user(
                 # exceptions other than UniqueViolation
                 raise e
         else:
+            # publish App Home view to the user
+            client.views_publish(user_id=context.actor_user_id, view=app_home_view)
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
