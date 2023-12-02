@@ -10,3 +10,7 @@ kill_timeout = 5
 
 [env]
 TZ = "Asia/Tokyo"
+
+[[vm]]
+size = "shared-cpu-1x"
+memory = "512mb"
