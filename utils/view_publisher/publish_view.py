@@ -23,9 +23,9 @@ response = client.views_publish(user_id=args.userid, view=viewdict)
 
 
 res_data = response.data
-if res_data["ok"]:
+if res_data["ok"]:  # type:ignore
     print("Successfully published the view.")
 else:
-    print(f"Error occured: {res_data['error']}")
+    print(f"Error occured: {res_data['error']}")  # type:ignore
     print("Full response:")
     pprint(res_data)
