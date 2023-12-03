@@ -148,8 +148,13 @@ def register_RA(
             )
 
 
+# NOTE: **This event also occurs when a message is edited**
+# TODO: The implementation of `add_or_update_record` is too complicated.
+#       It would be better to do only `add` in this event handler,
+#       and `update` should be handled by the handler attached @app.event("message"),
+#       because it is not obvious that "app_mention" event also occurs when the message is edited.
 @app.event("app_mention")
-def add_record(event: dict, context: BoltContext, client: WebClient):
+def add_or_update_record(event: dict, context: BoltContext, client: WebClient):
     # check that `context` variable is available
     if not (context.channel_id and context.actor_user_id):
         raise ValueError("something is wrong with `context` variable")
@@ -244,42 +249,76 @@ def add_record(event: dict, context: BoltContext, client: WebClient):
     else:
         break_time = datetime.time(hour=0, minute=0)
 
-    # add to the database
+    # add a new record or update existing one
     with get_session() as sess:
-        try:
-            record = TimeCard(
-                ra_id=ra_id,
-                start_time=start_dt,
-                end_time=end_dt,
-                duration=duration_time,
-                break_duration=break_time,
-                description=description,
-                slack_message_ts=slack_message_ts,
-            )
-            sess.add(record)
-            sess.flush()
-            sess.commit()
-        except Exception:
-            sess.rollback()
-            client.chat_postEphemeral(
-                channel=context.channel_id,
-                user=context.actor_user_id,
-                text=":x: 何らかのデータベースエラーにより記録できませんでした。",
-            )
-            raise
-        else:
-            client.chat_postEphemeral(
-                channel=context.channel_id,
-                user=context.actor_user_id,
-                text=(
-                    f":white_check_mark: 作業を記録しました。\n"
-                    f"RA区分: {ra_name}\n"
-                    f"作業日時: {date_str} {start_time_str}-{end_time_str}\n"
-                    f"作業時間: {duration_time.hour:02}:{duration_time.minute:02}\n"
-                    f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
-                    f"作業内容: {description}"
-                ),
-            )
+        record = sess.execute(
+            select(TimeCard).where(TimeCard.slack_message_ts == slack_message_ts)
+        ).scalar_one_or_none()
+        if not record:  # existing record was not found, so try to add new one
+            try:
+                new_record = TimeCard(
+                    ra_id=ra_id,
+                    start_time=start_dt,
+                    end_time=end_dt,
+                    duration=duration_time,
+                    break_duration=break_time,
+                    description=description,
+                    slack_message_ts=slack_message_ts,
+                )
+                sess.add(new_record)
+                sess.flush()
+                sess.commit()
+            except Exception:
+                sess.rollback()
+                client.chat_postEphemeral(
+                    channel=context.channel_id,
+                    user=context.actor_user_id,
+                    text=":x: 何らかのデータベースエラーにより記録できませんでした。",
+                )
+                raise
+            else:
+                client.chat_postEphemeral(
+                    channel=context.channel_id,
+                    user=context.actor_user_id,
+                    text=(
+                        f":white_check_mark: 作業を記録しました。\n"
+                        f"RA区分: {ra_name}\n"
+                        f"作業日時: {date_str} {start_time_str}-{end_time_str}\n"
+                        f"作業時間: {duration_time.hour:02}:{duration_time.minute:02}\n"
+                        f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
+                        f"作業内容: {description}"
+                    ),
+                )
+        else:  # existing record was found, so update it
+            try:
+                record.start_time = start_dt
+                record.end_time = end_dt
+                record.duration = duration_time
+                record.break_duration = break_time
+                record.description = description
+                sess.flush()
+                sess.commit()
+            except Exception:
+                sess.rollback()
+                client.chat_postEphemeral(
+                    channel=context.channel_id,
+                    user=context.actor_user_id,
+                    text=":x: 何らかのデータベースエラーにより更新できませんでした。",
+                )
+                raise
+            else:
+                client.chat_postEphemeral(
+                    channel=context.channel_id,
+                    user=context.actor_user_id,
+                    text=(
+                        f":white_check_mark: 作業を更新しました。\n"
+                        f"RA区分: {ra_name}\n"
+                        f"作業日時: {date_str} {start_time_str}-{end_time_str}\n"
+                        f"作業時間: {duration_time.hour:02}:{duration_time.minute:02}\n"
+                        f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
+                        f"作業内容: {description}"
+                    ),
+                )
 
 
 @app.event("message")
