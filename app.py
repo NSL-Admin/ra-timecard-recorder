@@ -492,19 +492,19 @@ def download_csv(
     csv_text = csv_text_as_file.getvalue()
     csv_text_as_file.close()
 
+    dm_with_the_user = client.conversations_open(users=context.actor_user_id)
     # upload the CSV and send user the URL to it
-    new_csv_file = client.files_upload_v2(
-        channel=context.channel_id,
+    client.files_upload_v2(
+        channel=dm_with_the_user["channel"]["id"],
         title=f"{date.year}/{date.month}の作業時間",
         filename=f"{date.year}_{date.month}_working_hours.csv",
         content=csv_text,
     )
 
-    file_url = new_csv_file.get("file").get("permalink")  # type:ignore
     client.chat_postEphemeral(
         channel=context.channel_id,
         user=context.actor_user_id,
-        text=f":page_facing_up: {file_url}",
+        text=":page_facing_up: DMにCSVファイルを送信しました。",
     )
 
 
