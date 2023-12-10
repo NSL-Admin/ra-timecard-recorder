@@ -13,7 +13,12 @@ from dotenv import load_dotenv
 from psycopg2.errors import UniqueViolation
 from slack_bolt import Ack, App, BoltContext
 from slack_bolt.adapter.socket_mode import SocketModeHandler
-from slack_sdk.models.blocks import MarkdownTextObject, SectionBlock
+from slack_sdk.models.blocks import (
+    ContextBlock,
+    DividerBlock,
+    MarkdownTextObject,
+    SectionBlock,
+)
 from slack_sdk.web.client import WebClient
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -87,7 +92,7 @@ def register_user(
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=":email: DMでこのBotからのメッセージを確認してください。",
+                text=":email: このBotからのDMを確認してください。",
             )
             dm_with_the_user = client.conversations_open(users=context.actor_user_id)
             client.chat_postMessage(
@@ -181,14 +186,24 @@ def add_or_update_record(event: dict, context: BoltContext, client: WebClient):
                             """
                                 :x: 形式が不正です。以下の形式で入力してください
 
+                                ```
                                 @RA timecard recorder [任意のコメント(省略可)]
                                 • あなたの氏名 (例: RA太郎)
                                 • RA区分名 (例: NTTコム)
                                 • 実働期間 (例: 2023/11/18 10:00-17:00 休憩01:00)
                                 • 作業内容の説明 (例: データセットの確認)
+                                ```
                                 """
                         )
                     ),
+                ),
+                DividerBlock(),
+                ContextBlock(
+                    elements=[
+                        MarkdownTextObject(
+                            text=":bulb: 送ったメッセージを消して再投稿する必要はありません。編集して修正してください。"
+                        )
+                    ]
                 ),
             ],
         )
@@ -223,7 +238,7 @@ def add_or_update_record(event: dict, context: BoltContext, client: WebClient):
             user=context.actor_user_id,
             text=textwrap.dedent(
                 """
-                    :x: 形式が不正です。次の形式で入力してください。"休憩" 以降は省略可能です。桁数や不要な空白等に注意してください。
+                    :x: 実働期間の形式が不正です。次の形式で入力してください。"休憩" 以降は省略可能です。桁数や不要な空白等に注意してください。
                     `2023/11/18 10:00-18:00 休憩01:00`
                 """
             ),
