@@ -210,9 +210,9 @@ def add_or_update_record(event: dict, context: BoltContext, client: WebClient):
         return
 
     # extract information from user's message
-    ra_name = message_matched.group("ra_name")
-    duration_str = message_matched.group("duration")
-    description = message_matched.group("description")
+    ra_name = message_matched.group("ra_name").strip()
+    duration_str = message_matched.group("duration").strip()
+    description = message_matched.group("description").strip()
 
     # ensure that this user and RA is registered
     with get_session() as sess:
