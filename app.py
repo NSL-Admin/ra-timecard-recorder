@@ -5,7 +5,6 @@ import json
 import os
 import re
 import textwrap
-from typing import Optional
 
 import sqlalchemy.sql.functions as sqlfuncs
 from dateutil import relativedelta
@@ -402,8 +401,8 @@ def get_working_hours(
     first_day_of_this_month = datetime.date(year=date.year, month=date.month, day=1)
     with get_session() as sess:
         # added type hint since SQLAlchemy can't infer it
-        working_hours: Optional[datetime.timedelta] = sess.execute(
-            select(sqlfuncs.sum(TimeCard.duration))
+        working_hours_of_all_RAs = sess.execute(
+            select(RA.ra_name, sqlfuncs.sum(TimeCard.duration))
             .join(RA, RA.id == TimeCard.ra_id)
             .join(User, User.id == RA.user_id)
             .where(
@@ -412,16 +411,20 @@ def get_working_hours(
                 TimeCard.end_time
                 < first_day_of_this_month + relativedelta.relativedelta(months=1),
             )
-        ).scalar()
+            .group_by(RA.ra_name)
+        )
 
-    if working_hours:
-        working_hours_datetime: datetime.time = (
-            datetime.datetime.min + working_hours
-        ).time()  # convert timedelta to time
+    if working_hours_of_all_RAs:
+        message = f':pencil: {year_month if year_month else "今月"}の稼働時間は以下の通りです。'
+        for working_hour in working_hours_of_all_RAs:
+            ra_name, working_hours = working_hour._tuple()
+            total_seconds = working_hours.total_seconds()
+            # avoid problems related to float precision by only using floor division
+            hours = total_seconds // 3600
+            minutes = (total_seconds - hours * 3600) // 60
+            message += f"\n{ra_name}:  {int(hours):02}:{int(minutes):02}"
         client.chat_postEphemeral(
-            channel=context.channel_id,
-            user=context.actor_user_id,
-            text=f':pencil: {year_month if year_month else "今月"}の稼働時間は{working_hours_datetime.strftime("%H:%M")}です。',
+            channel=context.channel_id, user=context.actor_user_id, text=message
         )
     else:
         client.chat_postEphemeral(
