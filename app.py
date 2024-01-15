@@ -621,8 +621,8 @@ def admin_download_all_records(
         title=f"{date.year}/{date.month}の全ユーザの作業記録",
         filename=f"{date.year}_{date.month}_all_working_records.csv",
         content=csv_text.encode(
-            encoding="shift_jis"
-        ),  # NOTE: this command exports CSV in Shift_JIS.
+            encoding="cp932"
+        ),  # NOTE: this command exports CSV in Shift_JIS. "cp932" can handle platform-dependent characters like "髙".
     )
 
     client.chat_postEphemeral(
