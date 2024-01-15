@@ -589,6 +589,7 @@ def admin_download_all_records(
             "ra_name",
             "start_timestamp",
             "end_timestamp",
+            "work_duration",
             "break_duration",
             "description",
         ],
@@ -596,12 +597,16 @@ def admin_download_all_records(
     writer.writeheader()
     for record in records:
         user, ra, timecard = record._tuple()
+        duration_time = (
+            datetime.datetime.min + (timecard.end_time - timecard.start_time)
+        ).time()  # convert timedelta to Time
         writer.writerow(
             {
                 "name": user.name,
                 "ra_name": ra.ra_name,
                 "start_timestamp": timecard.start_time.strftime("%Y/%m/%d %H:%M:%S"),
                 "end_timestamp": timecard.end_time.strftime("%Y/%m/%d %H:%M:%S"),
+                "work_duration": duration_time.strftime("%H:%M"),
                 "break_duration": timecard.break_duration.strftime("%H:%M"),
                 "description": timecard.description,
             }
@@ -615,7 +620,9 @@ def admin_download_all_records(
         channel=dm_with_the_user["channel"]["id"],
         title=f"{date.year}/{date.month}の全ユーザの作業記録",
         filename=f"{date.year}_{date.month}_all_working_records.csv",
-        content=csv_text,
+        content=csv_text.encode(
+            encoding="shift_jis"
+        ),  # NOTE: this command exports CSV in Shift_JIS.
     )
 
     client.chat_postEphemeral(
