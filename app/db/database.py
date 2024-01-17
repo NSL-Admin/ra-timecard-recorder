@@ -10,16 +10,18 @@ from ..config import DBConfig
 from .model import Base
 
 
-def setup_db_and_get_sessionmaker(db_config: DBConfig) -> sessionmaker[Session]:
+def setup_db_and_get_sessionmaker(
+    db_config: DBConfig, sqlalchemy_loglevel: int = logging.WARNING
+) -> sessionmaker[Session]:
     """
     return `sessionmaker` after following procedures:
 
-    1. enable logging by SQLAlchemy, with loglevel set to "INFO".
+    1. set SQLAlchemy logger to `sqlalchemy_loglevel`.
     2. connect to DB and create all tables defined in model.py.
     3. get `sessionmaker` that creates "session", on which DB operations will be performed.
     4. set up signal handler, so that connection to db will be properly closed on SIGINT or SIGTERM.
     """
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+    logging.getLogger("sqlalchemy.engine").setLevel(sqlalchemy_loglevel)
 
     ### DB setup ###
     db_url = URL.create(

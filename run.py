@@ -25,6 +25,9 @@ parser.add_argument(
 if __name__ == "__main__":
     args = parser.parse_args()
 
+    ### globally enable logging (to stdout) ###
+    logging.basicConfig()
+
     ### create logger for logs from this app ###
     logger = logging.getLogger("bot")
     logger.setLevel(logging.INFO)
@@ -51,7 +54,9 @@ if __name__ == "__main__":
         slack_config = SlackConfig.from_env()
 
     ### setup db ###
-    db_sessmaker = setup_db_and_get_sessionmaker(db_config=db_config)
+    db_sessmaker = setup_db_and_get_sessionmaker(
+        db_config=db_config, sqlalchemy_loglevel=logging.INFO
+    )
 
     # wrap objects in BotContext
     bot_context = BotContext(
