@@ -5,6 +5,8 @@
 ### My Files ###
 # dotenv file
 **/*.env
+**/slack_secret_config.json
+**/db_secret_config.json
 
 # utils for development
 **/utils
