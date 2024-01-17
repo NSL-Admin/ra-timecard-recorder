@@ -24,6 +24,7 @@ def on_mention_wrapper(bot_context: BotContext):
     #       It would be better to do only `add` in this event handler,
     #       and `update` should be handled by the handler attached @app.event("message"),
     #       because it is not obvious that "app_mention" event also occurs when the message is edited.
+
     def on_mention(event: dict, context: BoltContext, client: WebClient):
         # check that `context` variable is available
         if not (context.channel_id and context.actor_user_id):
@@ -205,3 +206,5 @@ def on_mention_wrapper(bot_context: BotContext):
                             f"作業内容: {description}"
                         ),
                     )
+
+    return on_mention
