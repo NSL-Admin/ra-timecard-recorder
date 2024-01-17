@@ -1,8 +1,7 @@
 from slack_bolt import App
 
-from listeners import commands, events
-
 from ..context import BotContext
+from . import commands, events
 
 
 def register_listeners(app: App, bot_context: BotContext):
