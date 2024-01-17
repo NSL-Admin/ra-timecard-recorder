@@ -42,18 +42,16 @@ def init_wrapper(bot_context: BotContext):
                 sess.flush()
                 sess.commit()
                 # fetch App Home view to publish it to the user
-                if os.path.exists(
-                    os.path.join(__file__, "../../assets/current_app_home_block.json")
-                ):
-                    with open(
-                        os.path.join(
-                            __file__, "../../assets/current_app_home_block.json"
-                        )
-                    ) as viewfile:
+                app_home_view_filepath = os.path.join(
+                    os.path.dirname(__file__),
+                    "../../assets/current_app_home_block.json",
+                )
+                if os.path.exists(app_home_view_filepath):
+                    with open(app_home_view_filepath) as viewfile:
                         app_home_view = json.load(viewfile)
                 else:
                     raise FileNotFoundError(
-                        f"JSON file containing App Home view ({os.path.join(__file__, '../../assets/current_app_home_block.json')}) was not found."
+                        f"JSON file containing App Home view ({app_home_view_filepath}) was not found."
                     )
             except IntegrityError as e:
                 sess.rollback()
