@@ -4,6 +4,9 @@
 ### My Files ###
 # dotenv file
 *.env
+# json files that may contain sensitive information
+db_secret_config.json
+slack_secret_config.json
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
