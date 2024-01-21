@@ -6,7 +6,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from app.config import BotConfig, DBConfig, SlackConfig
 from app.context import BotContext
-from app.db.database import setup_db_and_get_sessionmaker
+from app.db.setup import setup_db_and_get_sessionmaker
 from app.listeners import register_listeners
 
 parser = argparse.ArgumentParser(description="Launch RA timecard recorder")
