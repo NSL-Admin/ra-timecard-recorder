@@ -5,11 +5,19 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, MappedAsDataclass, mapped_co
 
 
 class Base(DeclarativeBase, MappedAsDataclass):
+    """
+    a base class inherited by all models used in the bot
+    """
+
     # Base.metadata will store the information of all the tables that inherit this class
     pass
 
 
 class User(Base):
+    """
+    a model representing a user of the bot
+    """
+
     __tablename__ = "botuser"  # table name is changed because "botuser" is a reserved keyword in PostgreSQL
 
     # id will be automatically assigned by the database, so it should not be initialized in the constructor
@@ -19,6 +27,10 @@ class User(Base):
 
 
 class RA(Base):
+    """
+    a model representing an RA job
+    """
+
     __tablename__ = "ra"
 
     # id will be automatically assigned by the database, so it should not be initialized in the constructor
@@ -30,6 +42,10 @@ class RA(Base):
 
 
 class TimeCard(Base):
+    """
+    a model representing a record of a work
+    """
+
     __tablename__ = "timecard"
 
     # id will be automatically assigned by the database, so it should not be initialized in the constructor
