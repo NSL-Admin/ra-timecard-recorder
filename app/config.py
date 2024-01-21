@@ -9,6 +9,9 @@ def is_valid_dict(dict_to_check: dict[str, Optional[str]]) -> TypeGuard[dict[str
 
 class SlackConfig:
     def __init__(self, app_token: str, bot_token: str) -> None:
+        """
+        [NOTE] This class should not be instantiated directly. Use `SlackConfig.from_file` or `SlackConfig.from_env`
+        """
         self.app_token = app_token
         self.bot_token = bot_token
 
@@ -39,6 +42,9 @@ class SlackConfig:
 
 class DBConfig:
     def __init__(self, username: str, password: str, host: str, db_name: str) -> None:
+        """
+        [NOTE] This class should not be instantiated directly. Use `DBConfig.from_file` or `DBConfig.from_env`
+        """
         self.username = username
         self.password = password
         self.host = host
@@ -73,7 +79,9 @@ class DBConfig:
 
 class BotConfig:
     def __init__(self, admin_ids: list[str]) -> None:
-        "[NOTE] This class should not be instantiated directly. Use `BotConfig.from_file`"
+        """
+        [NOTE] This class should not be instantiated directly. Use `BotConfig.from_file`"
+        """
         self.admin_ids = admin_ids
 
     @classmethod
