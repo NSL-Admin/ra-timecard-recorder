@@ -52,7 +52,7 @@ def get_working_hours_wrapper(bot_context: BotContext):
                 .group_by(RA.ra_name)
             )
 
-        if working_hours_of_all_RAs.all():  # NOTE: `working_hours_of_all_RAs` is a `sqlalchemy.engine.result.ChunkedIteratorResult` object. Without .all(), it won't be evaluated to false even if it contains no result.
+        if working_hours_of_all_RAs.all():  # NOTE: `working_hours_of_all_RAs` is a `sqlalchemy.engine.result.ChunkedIteratorResult` object. Without .all(), it won't be evaluated to False even if it contains no result.
             message = f':pencil: {year_month if year_month else "今月"}の稼働時間は以下の通りです。'
             for working_hour in working_hours_of_all_RAs:
                 ra_name, working_hours = working_hour._tuple()
