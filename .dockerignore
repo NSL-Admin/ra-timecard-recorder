@@ -2,12 +2,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
-### My Files ###
-# dotenv file
-**/*.env
-
+### My Stuff ###
 # utils for development
-**/utils
+**/dev_utils
+**/misc
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

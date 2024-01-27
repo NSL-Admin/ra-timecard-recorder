@@ -12,5 +12,6 @@ kill_timeout = 5
 TZ = "Asia/Tokyo"
 
 [[vm]]
+# instance will be free of charge iff size == "shared-cpu-1x" and memory == "256mb"
 size = "shared-cpu-1x"
 memory = "256mb"

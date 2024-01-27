@@ -27,6 +27,10 @@ features:
       description: 作業記録をCSV形式でダウンロード
       usage_hint: "[yyyy/mm]"
       should_escape: false
+    - command: /admin_download_all_records
+      description: 【要権限】全てのユーザの勤務記録を出力します
+      usage_hint: "[yyyy/mm]"
+      should_escape: false
 oauth_config:
   scopes:
     bot:
