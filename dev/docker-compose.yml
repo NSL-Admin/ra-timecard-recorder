@@ -25,8 +25,8 @@ services:
     volumes:
       - type: bind
         source: ..
-        target: /usr/src/app
-    working_dir: /usr/src/app
+        target: /app
+    working_dir: /app
     links:
       - db:db
     environment:
