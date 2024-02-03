@@ -1,0 +1,50 @@
+# docker-compose to start development in local environment
+
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    container_name: ra_timecard_recorder_dev_db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: ra_timecard_recorder_dev_db
+    healthcheck:
+      # check if the database is already created and ready to accept connections
+      test: "PGPASSWORD=root psql -U root -d 'ra_timecard_recorder_dev_db' -c 'select 1;' 2>&1 > /dev/null"
+      interval: 5s
+
+  app:
+    build:
+      # build container using Dockerfile, with context of parent directory
+      context: ..
+      dockerfile: ./Dockerfile
+    container_name: ra_timecard_recorder_dev_app
+    volumes:
+      - type: bind
+        source: ..
+        target: /usr/src/app
+    working_dir: /usr/src/app
+    links:
+      - db:db
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_HOST: db
+      DB_NAME: ra_timecard_recorder_dev_db
+    depends_on:
+      db:
+        condition: service_healthy
+    tty: true
+    stdin_open: true
+    command:
+      [
+        "python",
+        "./run.py",
+        "--botconfig",
+        "./config/bot_config.json",
+        "--slackconfig",
+        "./config/slack_secret_config.json"
+      ]
