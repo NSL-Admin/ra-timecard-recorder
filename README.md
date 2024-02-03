@@ -51,17 +51,43 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 1. `/get_working_hours [yyyy/mm]` を実行すると yyyy/mm (例: 2023/11)の勤務時間を確認することができます。年月を省略した場合、今月の勤務時間が表示されます。
 2. `/download_csv [yyyy/mm]` を実行すると yyyy/mm (例: 2023/11)の勤務記録をCSVファイル形式でダウンロードすることができます。年月を省略した場合、今月の勤務記録がダウンロードされます。
 
+## コマンドラインからアプリケーションを起動するには
+
+> [!TIP]
+> ローカル環境で開発を始めようとしている場合は、`/dev/README.md` を読んでください。
+
+Botの動作に必要な情報を設定する方法は2通りあります。
+1. `/config` 内の各設定ファイルを用いて設定する
+   - `/config` 内の各設定ファイルに情報を書き込んでください。
+2. 環境変数に設定する
+   - 以下の表の通りに環境変数を設定してください。
+
+   | 変数名            | 説明                                               |
+   | :-:               | :-:                                                |
+   | `DB_USERNAME`     | PostgreSQLデータベースへアクセスする際のユーザ名   |
+   | `DB_PASSWORD`     | PostgreSQLデータベースへアクセスする際のパスワード |
+   | `DB_HOST`         | PostgreSQLデータベースのホスト名                   |
+   | `DB_NAME`         | PostgreSQLデータベース内のデータベース名           |
+   | `SLACK_APP_TOKEN` | SlackアプリのApp-Level Token                       |
+   | `SLACK_BOT_TOKEN` | SlackアプリのBot User OAuth Token                  |
+
+設定が終わったら以下のコマンドを実行します。情報を設定ファイルに記入したか環境変数に設定したかに応じて指定する引数を変更してください。
+
+```bash
+python ./run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_secret_config.json] --slackconfig [path-to-slack_secret_config.json]
+```
+
+| 引数名          | 説明                              | 必須    | 備考                          |
+| :-:             | :-:                               | :-:     | :-:                           |
+| `--botconfig`   | Botの設定ファイルへのパス         |  はい   |                               |
+| `--dbconfig`    | DB接続情報設定ファイルへのパス    |  いいえ | 省略時は環境変数が参照される |
+| `--slackconfig` | Slack資格情報設定ファイルへのパス |  いいえ | 省略時は環境変数が参照される |
+
 ## 本番環境にデプロイするには
 
 このリポジトリ内のコードはすぐに[fly.io](https://fly.io)にデプロイ出来るようになっています。
 また、mainリポジトリにPull Requestをマージすることでfly.ioへのデプロイが自動的に行われます。
 
-1. 各種PaaSのコントロールパネルにて、以下の環境変数を設定してください。
-   - DB_USERNAME: PostgreSQLデータベースへアクセスする際のユーザ名
-   - DB_PASSWORD: PostgreSQLデータベースへアクセスする際のパスワード
-   - DB_HOST: PostgreSQLデータベースのホスト名
-   - DB_NAME: PostgreSQLデータベース内のデータベース名
-   - SLACK_APP_TOKEN: SlackアプリのApp-Level Token
-   - SLACK_BOT_TOKEN: SlackアプリのBot User OAuth Token
+1. 各種PaaSのコントロールパネルにて、[コマンドラインからアプリケーションを起動するには]()に示した以下の環境変数を設定してください。
 
 2. このリポジトリのルートに置かれているDockerfileを用いてコンテナイメージをビルドし、デプロイしてください。
