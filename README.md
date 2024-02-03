@@ -88,6 +88,6 @@ python ./run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_sec
 このリポジトリ内のコードはすぐに[fly.io](https://fly.io)にデプロイ出来るようになっています。
 また、mainブランチにPull Requestをマージすることでfly.ioへのデプロイが自動的に行われます。
 
-1. セキュリティ事故を防ぐため、各種情報を環境変数に設定することを推奨します。環境変数に各種PaaSのコントロールパネルにて、[コマンドラインからBotを起動するには](https://github.com/NSL-Admin/ra-timecard-recorder/tree/main?tab=readme-ov-file#コマンドラインからBotを起動するには)の表で示した環境変数を設定してください。
+1. セキュリティ事故を防ぐため、各種情報を環境変数に設定することを推奨します。各種PaaSのコントロールパネルにて、[コマンドラインからBotを起動するには](#コマンドラインからBotを起動するには)の表で示した環境変数を設定してください。
 
 2. このリポジトリのルートに置かれているDockerfileを用いてコンテナイメージをビルドし、デプロイしてください。
