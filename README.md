@@ -8,7 +8,8 @@ RAが勤務を記録し管理する作業を支援するBotです。Slackへの�
 
 ## Botの使用方法
 
-:bulb: Slack上でこのBotとのDMを開いたときの「ホーム」タブに表示される使い方ガイドも参照してください。
+> [!TIP]
+> Slack上でこのBotとのDMを開いたときの「ホーム」タブに表示される使い方ガイドも参照してください。
 
 ### 初期設定
 
@@ -37,6 +38,10 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
   - :o: 09:04   :x: 9:04
 - 勤務中に休憩をしたときは、勤務時間の後ろに半角スペースを空け、それに続けて `休憩01:00` のように記入してください。"休憩"という文字列もこの通りに入力してください。全体で `2023/11/18 21:00-22:00 休憩01:00` のようになります。
 
+**勤務記録の更新**
+
+上記で送信した勤務記録のメッセージを編集すると、それに対応する勤務記録がBotのデータベースにおいても更新されます。
+
 **勤務記録の削除**
 
 上記で送信した勤務記録のメッセージを削除すると、それに対応する勤務記録がBotのデータベースからも削除されます。
@@ -46,45 +51,43 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 1. `/get_working_hours [yyyy/mm]` を実行すると yyyy/mm (例: 2023/11)の勤務時間を確認することができます。年月を省略した場合、今月の勤務時間が表示されます。
 2. `/download_csv [yyyy/mm]` を実行すると yyyy/mm (例: 2023/11)の勤務記録をCSVファイル形式でダウンロードすることができます。年月を省略した場合、今月の勤務記録がダウンロードされます。
 
-## ローカル環境で開発を始めるには
+## コマンドラインからBotを起動するには
 
-1. `utils/dev_database` ディレクトリに移動し、`docker compose up -d` を実行してください。PostgreSQLのコンテナが起動し、内部に開発用データベースが作成されます。
+> [!TIP]
+> ローカル環境で開発を始めようとしている場合は、`/dev/README.md` を読んでください。
 
-2. 以下のような .db.env という名前のファイルを作成してください。
+Botの動作に必要な情報を設定する方法は2通りあります。
+1. `/config` 内の各設定ファイルを用いて設定する
+   - `/config/README.md` を参考にしながら、各設定ファイルに情報を書き込んでください。
+2. 環境変数に設定する
+   - 以下の表の通りに環境変数を設定してください。
 
-    .db.env
-    ```
-    DB_USERNAME=root
-    DB_PASSWORD=root
-    DB_HOST=localhost
-    DB_NAME=ra_timecard_recorder_dev_db
-    ```
+   | 変数名            | 説明                                               |
+   | :-:               | :-:                                                |
+   | `DB_USERNAME`     | PostgreSQLデータベースへアクセスする際のユーザ名   |
+   | `DB_PASSWORD`     | PostgreSQLデータベースへアクセスする際のパスワード |
+   | `DB_HOST`         | PostgreSQLデータベースのホスト名                   |
+   | `DB_NAME`         | PostgreSQLデータベース内のデータベース名           |
+   | `SLACK_APP_TOKEN` | SlackアプリのApp-Level Token                       |
+   | `SLACK_BOT_TOKEN` | SlackアプリのBot User OAuth Token                  |
 
-3. リポジトリ内の `assets/manifest.yml` をもとに[Slackのポータル](https://api.slack.com/apps)にてアプリケーションを作成し、作成したアプリレベルトークンとボットトークンを以下のような .slack.env という名前のファイルに保存してください。
+設定が終わったら以下のコマンドを実行します。情報を設定ファイルに記入したか環境変数に設定したかに応じて指定する引数を変更してください。
 
-    .slack.env
-    ```
-    SLACK_APP_TOKEN=xapp-xxxxxxxxxxxx
-    SLACK_BOT_TOKEN=xoxb-yyyyyyyyyyyy
-    ```
+```bash
+python ./run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_secret_config.json] --slackconfig [path-to-slack_secret_config.json]
+```
 
-4. PythonからPostgreSQLに接続するために必要となる[psycopgのインストール要件](https://www.psycopg.org/docs/)を満たしているか確認してください。満たしていない場合、6.のpip installが失敗します。
-
-5. Pythonの仮想環境を作成し、このリポジトリフォルダ直下で `pip install -r requirements.txt` を実行して必要なライブラリをインストールしてください。
-
-6. `python app.py` を実行して開発を始めてください。
+| 引数名          | 説明                              | 必須    | 備考                          |
+| :-:             | :-:                               | :-:     | :-:                           |
+| `--botconfig`   | Botの設定ファイルへのパス         |  はい   |                               |
+| `--dbconfig`    | DB接続情報設定ファイルへのパス    |  いいえ | 省略時は環境変数が参照される |
+| `--slackconfig` | Slack資格情報設定ファイルへのパス |  いいえ | 省略時は環境変数が参照される |
 
 ## 本番環境にデプロイするには
 
 このリポジトリ内のコードはすぐに[fly.io](https://fly.io)にデプロイ出来るようになっています。
-また、mainリポジトリにPull Requestをマージすることでfly.ioへのデプロイが自動的に行われます。
+また、mainブランチにPull Requestをマージすることでfly.ioへのデプロイが自動的に行われます。
 
-1. 各種PaaSのコントロールパネルにて、以下の環境変数を設定してください。
-   - DB_USERNAME: PostgreSQLデータベースへアクセスする際のユーザ名
-   - DB_PASSWORD: PostgreSQLデータベースへアクセスする際のパスワード
-   - DB_HOST: PostgreSQLデータベースのホスト名
-   - DB_NAME: PostgreSQLデータベース内のデータベース名
-   - SLACK_APP_TOKEN: Slackアプリのアプリレベルトークン
-   - SLACK_BOT_TOKEN: Slackアプリのボットトークン
+1. セキュリティ事故を防ぐため、各種情報を環境変数に設定することを推奨します。各種PaaSのコントロールパネルにて、[コマンドラインからBotを起動するには](#コマンドラインからBotを起動するには)の表で示した環境変数を設定してください。
 
-2. このリポジトリにすでに置かれているDockerfileをもとにコンテナイメージをビルドし、デプロイしてください。
+2. このリポジトリのルートに置かれているDockerfileを用いてコンテナイメージをビルドし、デプロイしてください。

@@ -10,4 +10,4 @@
     ```python
     python publish_view.py <ビューをpublishする宛のSlackユーザID> <ビュー含むJSONファイルへのパス>
     ```
-    を実行し、botトークンを入力してください。
+    を実行し、Bot User OAuth Tokenを入力してください。
