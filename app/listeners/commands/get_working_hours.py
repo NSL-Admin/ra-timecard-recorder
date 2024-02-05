@@ -40,7 +40,7 @@ def get_working_hours_wrapper(bot_context: BotContext):
         with botctx.db_sessmaker() as sess:
             # added type hint since SQLAlchemy can't infer it
             working_hours_of_all_RAs = sess.execute(
-                select(RA.ra_name, sqlfuncs.sum(TimeCard.duration))
+                select(RA.ra_name, sqlfuncs.sum(TimeCard.duration - TimeCard.break_duration))
                 .join(RA, RA.id == TimeCard.ra_id)
                 .join(User, User.id == RA.user_id)
                 .where(
