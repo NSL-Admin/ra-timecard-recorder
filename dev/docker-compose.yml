@@ -46,5 +46,7 @@ services:
         "--botconfig",
         "./config/bot_config.json",
         "--slackconfig",
-        "./config/slack_secret_config.json"
+        "./config/slack_secret_config.json",
+        "--bot_verbose",
+        "--db_verbose"
       ]
