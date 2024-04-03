@@ -76,7 +76,7 @@ def on_mention_wrapper(bot_context: BotContext):
                 ],
             )
             botctx.logger.info(
-                f"user {context.actor_user_id} sent work record in invalid format"
+                f"slack user {context.actor_user_id} sent work record in invalid format"
             )
             return
 
@@ -101,7 +101,7 @@ def on_mention_wrapper(bot_context: BotContext):
                     text=f':x: あなたは "{ra_name}" という名称のRAを登録していないか、ユーザ登録を完了していません。',
                 )
                 botctx.logger.info(
-                    f"user {context.actor_user_id} sent work record for unknown RA: {ra_name}"
+                    f"slack user {context.actor_user_id} sent work record for unknown RA: {ra_name}"
                 )
                 return
 
@@ -120,7 +120,7 @@ def on_mention_wrapper(bot_context: BotContext):
                 ),
             )
             botctx.logger.info(
-                f"user {context.actor_user_id} sent work record whose date is in invalid format"
+                f"slack user {context.actor_user_id} sent work record whose date is in invalid format"
             )
             return
 
@@ -172,7 +172,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         text=":x: 何らかのデータベースエラーにより記録できませんでした。",
                     )
                     botctx.logger.exception(
-                        f"failed to record work by user {context.actor_user_id} for {ra_name} due to a database error"
+                        f"failed to record work by slack user {context.actor_user_id} for {ra_name} due to a database error"
                     )
                     raise
                 else:
@@ -189,7 +189,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         ),
                     )
                     botctx.logger.info(
-                        f"recorded work by user {context.actor_user_id} for {ra_name}"
+                        f"recorded work by slack user {context.actor_user_id} for {ra_name}"
                     )
             else:  # existing record was found, so update it
                 try:
@@ -208,7 +208,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         text=":x: 何らかのデータベースエラーにより更新できませんでした。",
                     )
                     botctx.logger.exception(
-                        f"failed to update work record by user {context.actor_user_id} for {ra_name} due to a database error"
+                        f"failed to update work record by slack user {context.actor_user_id} for {ra_name} due to a database error"
                     )
                     raise
                 else:
@@ -225,7 +225,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         ),
                     )
                     botctx.logger.info(
-                        f"updated work record by user {context.actor_user_id} for {ra_name}"
+                        f"updated work record by slack user {context.actor_user_id} for {ra_name}"
                     )
 
     return on_mention
