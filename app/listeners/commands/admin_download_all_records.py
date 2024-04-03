@@ -71,7 +71,9 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
                     user=context.actor_user_id,
                     text=f':beach_with_umbrella: {year_month if year_month else "今月"}の勤務記録はありません。',
                 )
-                botctx.logger.info(f"found no work record in {date} for any user")
+                botctx.logger.info(
+                    f"found no work record in {date.year}/{date.month} for any user"
+                )
                 return
 
         # make CSV file

@@ -62,7 +62,7 @@ def download_csv_wrapper(bot_context: BotContext):
                     text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
                 )
                 botctx.logger.info(
-                    f"found no work record in {date} for slack user {context.actor_user_id}"
+                    f"found no work record in {date.year}/{date.month} for slack user {context.actor_user_id}"
                 )
                 return
 
