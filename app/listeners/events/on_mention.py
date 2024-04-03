@@ -98,7 +98,7 @@ def on_mention_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f':x: "{ra_name}" という名称のRAは登録されていません。',
+                    text=f':x: あなたは "{ra_name}" という名称のRAを登録していないか、ユーザ登録を完了していません。',
                 )
                 botctx.logger.info(
                     f"user {context.actor_user_id} sent work record for unknown RA: {ra_name}"
