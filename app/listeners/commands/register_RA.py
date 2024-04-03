@@ -26,7 +26,7 @@ def register_RA_wrapper(bot_context: BotContext):
                 text=":x: `/register_ra <RA区分名>` のように実行してください。",
             )
             botctx.logger.info(
-                f"slack user {context.actor_user_id} executed /register_RA command with no argument"
+                f"slack user {context.actor_user_id} executed /register_ra command with no argument"
             )
             return
 
@@ -42,7 +42,7 @@ def register_RA_wrapper(bot_context: BotContext):
                     text=":x: `/init <氏名>` で先にユーザ登録を行ってください。",
                 )
                 botctx.logger.info(
-                    f"slack user {context.actor_user_id} executed /register_RA, but is not registered as bot user yet"
+                    f"slack user {context.actor_user_id} executed /register_ra, but is not registered as bot user yet"
                 )
                 return
 
