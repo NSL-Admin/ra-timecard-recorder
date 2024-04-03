@@ -38,12 +38,18 @@ def on_message_delete_wrapper(bot_context: BotContext):
                     user=context.actor_user_id,
                     text=":x: 何らかのデータベースエラーにより削除できませんでした。",
                 )
+                botctx.logger.exception(
+                    f"failed to delete work record by user {context.actor_user_id} due to a database error"
+                )
                 raise
             else:
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
                     text=f":wastebasket: {record_to_delete.start_time}から{record_to_delete.end_time}の作業記録を削除しました。",
+                )
+                botctx.logger.info(
+                    f"deleted work record by user {context.actor_user_id}"
                 )
 
     return on_message_delete
