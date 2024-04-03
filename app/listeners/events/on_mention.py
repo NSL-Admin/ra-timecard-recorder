@@ -75,6 +75,9 @@ def on_mention_wrapper(bot_context: BotContext):
                     ),
                 ],
             )
+            botctx.logger.info(
+                f"slack user {context.actor_user_id} sent work record in invalid format"
+            )
             return
 
         # extract information from user's message
@@ -95,7 +98,10 @@ def on_mention_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f':x: "{ra_name}" という名称のRAは登録されていません。',
+                    text=f':x: あなたは "{ra_name}" という名称のRAを登録していないか、ユーザ登録を完了していません。',
+                )
+                botctx.logger.info(
+                    f"slack user {context.actor_user_id} sent work record for unknown RA: {ra_name}"
                 )
                 return
 
@@ -112,6 +118,9 @@ def on_mention_wrapper(bot_context: BotContext):
                         `2023/11/18 10:00-18:00 休憩01:00`
                     """
                 ),
+            )
+            botctx.logger.info(
+                f"slack user {context.actor_user_id} sent work record whose date is in invalid format"
             )
             return
 
@@ -162,6 +171,9 @@ def on_mention_wrapper(bot_context: BotContext):
                         user=context.actor_user_id,
                         text=":x: 何らかのデータベースエラーにより記録できませんでした。",
                     )
+                    botctx.logger.exception(
+                        f"failed to record work by slack user {context.actor_user_id} for RA {ra_name} due to a database error"
+                    )
                     raise
                 else:
                     client.chat_postEphemeral(
@@ -175,6 +187,9 @@ def on_mention_wrapper(bot_context: BotContext):
                             f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
                             f"作業内容: {description}"
                         ),
+                    )
+                    botctx.logger.info(
+                        f"recorded work by slack user {context.actor_user_id} for RA {ra_name}: {description}"
                     )
             else:  # existing record was found, so update it
                 try:
@@ -192,6 +207,9 @@ def on_mention_wrapper(bot_context: BotContext):
                         user=context.actor_user_id,
                         text=":x: 何らかのデータベースエラーにより更新できませんでした。",
                     )
+                    botctx.logger.exception(
+                        f"failed to update work record by slack user {context.actor_user_id} for RA {ra_name} due to a database error"
+                    )
                     raise
                 else:
                     client.chat_postEphemeral(
@@ -205,6 +223,9 @@ def on_mention_wrapper(bot_context: BotContext):
                             f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
                             f"作業内容: {description}"
                         ),
+                    )
+                    botctx.logger.info(
+                        f"updated work record by slack user {context.actor_user_id} for RA {ra_name}: {description}"
                     )
 
     return on_mention

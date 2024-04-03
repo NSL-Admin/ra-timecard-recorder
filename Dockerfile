@@ -7,4 +7,4 @@ WORKDIR /usr/src/app
 COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD [ "python", "./run.py", "--botconfig", "./config/bot_config.json"]
+CMD [ "python", "./run.py", "--botconfig", "./config/bot_config.json", "--bot_verbose"]

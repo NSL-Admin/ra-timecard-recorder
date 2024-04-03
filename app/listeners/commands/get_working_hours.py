@@ -32,6 +32,9 @@ def get_working_hours_wrapper(bot_context: BotContext):
                     user=context.actor_user_id,
                     text=":x: `/get_working_hours 2023/11` のように実行してください。",
                 )
+                botctx.logger.info(
+                    f"slack user {context.actor_user_id} executed /get_working_hours with invalid argument: {year_month}"
+                )
                 return
         else:
             date = datetime.date.today()
@@ -40,7 +43,10 @@ def get_working_hours_wrapper(bot_context: BotContext):
         with botctx.db_sessmaker() as sess:
             # added type hint since SQLAlchemy can't infer it
             working_hours_of_all_RAs = sess.execute(
-                select(RA.ra_name, sqlfuncs.sum(TimeCard.duration - TimeCard.break_duration))
+                select(
+                    RA.ra_name,
+                    sqlfuncs.sum(TimeCard.duration - TimeCard.break_duration),
+                )
                 .join(RA, RA.id == TimeCard.ra_id)
                 .join(User, User.id == RA.user_id)
                 .where(
@@ -64,11 +70,15 @@ def get_working_hours_wrapper(bot_context: BotContext):
             client.chat_postEphemeral(
                 channel=context.channel_id, user=context.actor_user_id, text=message
             )
+            botctx.logger.info(f"sent work hours to slack user {context.actor_user_id}")
         else:
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
                 text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
+            )
+            botctx.logger.info(
+                f"found no work record in {date.year}/{date.month} for slack user {context.actor_user_id}"
             )
 
     return get_working_hours

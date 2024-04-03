@@ -21,6 +21,14 @@ parser.add_argument(
     "--slackconfig",
     help="JSON file containing slack configuration (if not given, environment variables will be used)",
 )
+parser.add_argument(
+    "--bot_verbose",
+    help="Enable verbose logging from the bot application",
+    action="store_true",
+)
+parser.add_argument(
+    "--db_verbose", help="Enable verbose logging from SQLAlchemy", action="store_true"
+)
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -30,7 +38,10 @@ if __name__ == "__main__":
 
     ### create logger for logs from this app ###
     logger = logging.getLogger("bot")
-    logger.setLevel(logging.INFO)
+    if args.bot_verbose:
+        logger.setLevel(logging.INFO)
+    else:
+        logger.setLevel(logging.WARNING)
 
     ### load config ###
     # load config file for bot
@@ -54,8 +65,9 @@ if __name__ == "__main__":
         slack_config = SlackConfig.from_env()
 
     ### setup db ###
+    sqlalchemy_loglevel = logging.INFO if args.db_verbose else logging.WARNING
     db_sessmaker = setup_db_and_get_sessionmaker(
-        db_config=db_config, sqlalchemy_loglevel=logging.INFO
+        db_config=db_config, sqlalchemy_loglevel=sqlalchemy_loglevel
     )
 
     # wrap objects in BotContext
