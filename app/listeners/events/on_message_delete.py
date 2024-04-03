@@ -39,7 +39,7 @@ def on_message_delete_wrapper(bot_context: BotContext):
                     text=":x: 何らかのデータベースエラーにより削除できませんでした。",
                 )
                 botctx.logger.exception(
-                    f"failed to delete work record by slack user {context.actor_user_id} due to a database error"
+                    f"failed to delete work record whose ts is {deleted_slack_message_ts} by slack user {context.actor_user_id} due to a database error"
                 )
                 raise
             else:
