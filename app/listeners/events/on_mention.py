@@ -189,7 +189,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         ),
                     )
                     botctx.logger.info(
-                        f"recorded work by slack user {context.actor_user_id} for RA {ra_name}"
+                        f"recorded work by slack user {context.actor_user_id} for RA {ra_name}: {description}"
                     )
             else:  # existing record was found, so update it
                 try:
@@ -225,7 +225,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         ),
                     )
                     botctx.logger.info(
-                        f"updated work record by slack user {context.actor_user_id} for RA {ra_name}"
+                        f"updated work record by slack user {context.actor_user_id} for RA {ra_name}: {description}"
                     )
 
     return on_mention

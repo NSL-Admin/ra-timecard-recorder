@@ -49,7 +49,7 @@ def on_message_delete_wrapper(bot_context: BotContext):
                     text=f":wastebasket: {record_to_delete.start_time}から{record_to_delete.end_time}の作業記録を削除しました。",
                 )
                 botctx.logger.info(
-                    f"deleted work record by slack user {context.actor_user_id}"
+                    f"deleted work record by slack user {context.actor_user_id} from {record_to_delete.start_time} to {record_to_delete.end_time}: {record_to_delete.description}"
                 )
 
     return on_message_delete
