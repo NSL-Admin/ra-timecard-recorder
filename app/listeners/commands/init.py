@@ -29,6 +29,9 @@ def init_wrapper(bot_context: BotContext):
                 user=context.actor_user_id,
                 text=":x: `/init <氏名>` のように実行してください。",
             )
+            botctx.logger.info(
+                f"slack user {context.actor_user_id} executed /init command with no argument"
+            )
             return
 
         with botctx.db_sessmaker() as sess:  # with `with` statement, sess.close() is not needed
@@ -61,9 +64,19 @@ def init_wrapper(bot_context: BotContext):
                         user=context.actor_user_id,
                         text=f":thinking_face: {username} さん、既にユーザ登録が完了しているようです。",
                     )
+                    botctx.logger.info(
+                        f"slack user {context.actor_user_id} executed /init, but is already registered as bot user"
+                    )
                 else:
                     # exceptions other than UniqueViolation
-                    raise e
+                    client.chat_postEphemeral(
+                        channel=context.channel_id,
+                        user=context.actor_user_id,
+                        text=":x: 何らかのデータベースエラーによりユーザ登録できませんでした。",
+                    )
+                    botctx.logger.exception(
+                        f"failed to register slack user {context.actor_user_id} as bot user due to a database error"
+                    )
             else:
                 # publish App Home view to the user
                 client.views_publish(user_id=context.actor_user_id, view=app_home_view)
@@ -79,6 +92,9 @@ def init_wrapper(bot_context: BotContext):
                     channel=dm_with_the_user["channel"]["id"],
                     text=f":white_check_mark: {username} さん、ようこそ！ユーザ登録が完了しました。\n:rocket: 上の「ホーム」タブを開いて使い方ガイドを読んでください！",
                     mrkdwn=True,
+                )
+                botctx.logger.info(
+                    f"registered slack user {context.actor_user_id} as new bot user with the name {username}"
                 )
 
     return init

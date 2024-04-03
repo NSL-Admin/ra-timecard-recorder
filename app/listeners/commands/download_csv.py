@@ -33,6 +33,9 @@ def download_csv_wrapper(bot_context: BotContext):
                     user=context.actor_user_id,
                     text=":x: `/download_csv 2023/11` のように実行してください。",
                 )
+                botctx.logger.info(
+                    f"slack user {context.actor_user_id} executed /download_csv with invalid argument: {year_month}"
+                )
                 return
         else:
             date = datetime.date.today()
@@ -57,6 +60,9 @@ def download_csv_wrapper(bot_context: BotContext):
                     channel=context.channel_id,
                     user=context.actor_user_id,
                     text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
+                )
+                botctx.logger.info(
+                    f"found no work record in {year_month} for slack user {context.actor_user_id}"
                 )
                 return
 
@@ -102,6 +108,10 @@ def download_csv_wrapper(bot_context: BotContext):
             channel=context.channel_id,
             user=context.actor_user_id,
             text=":page_facing_up: DMにCSVファイルを送信しました。",
+        )
+
+        botctx.logger.info(
+            f"sent CSV file of work record to slack user {context.actor_user_id}"
         )
 
     return download_csv

@@ -29,6 +29,9 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
                 user=context.actor_user_id,
                 text=":x: あなたはこのコマンドを使うことができません。",
             )
+            botctx.logger.info(
+                f"slack user {context.actor_user_id} tried to execute /admin_download_all_records, but is not allowed to"
+            )
             return
 
         year_month = command["text"].strip()
@@ -40,6 +43,9 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
                     channel=context.channel_id,
                     user=context.actor_user_id,
                     text=":x: `/download_all_working_records 2023/11` のように実行してください。",
+                )
+                botctx.logger.info(
+                    f"slack user {context.actor_user_id} executed /admin_download_all_records with invalid argument: {year_month}"
                 )
                 return
         else:
@@ -65,6 +71,7 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
                     user=context.actor_user_id,
                     text=f':beach_with_umbrella: {year_month if year_month else "今月"}の勤務記録はありません。',
                 )
+                botctx.logger.info(f"found no work record in {year_month} for any user")
                 return
 
         # make CSV file
@@ -118,6 +125,10 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
             channel=context.channel_id,
             user=context.actor_user_id,
             text=":page_facing_up: DMにCSVファイルを送信しました。",
+        )
+
+        botctx.logger.info(
+            f"sent CSV file of all work records to slack user {context.actor_user_id}"
         )
 
     return admin_download_all_records
