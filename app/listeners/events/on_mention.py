@@ -106,7 +106,7 @@ def on_mention_wrapper(bot_context: BotContext):
                 return
 
         user_id, ra_id, ra_name = user_ra_data._tuple()
-        expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( 休憩(?P<break_time>.{5}))?$"
+        expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( 休憩(?P<break_time>[0-9:]{5}))?$"
         date_matched = re.match(pattern=expected_duration_format, string=duration_str)
         if not date_matched or (date_matched and len(date_matched.groups()) < 3):
             client.chat_postEphemeral(
