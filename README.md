@@ -54,11 +54,12 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 ## コマンドラインからBotを起動するには
 
 > [!TIP]
-> ローカル環境で開発を始めようとしている場合は、`/dev/README.md` を読んでください。
+> ローカル環境で開発を始めようとしている場合は、[`/dev/README.md`](/dev/README.md) を読んでください。
 
 Botの動作に必要な情報を設定する方法は2通りあります。
-1. `/config` 内の各設定ファイルを用いて設定する
-   - `/config/README.md` を参考にしながら、各設定ファイルに情報を書き込んでください。
+
+1. [`/config`](/config) 内の各設定ファイルを用いて設定する
+   - [`/config/README.md`](/config/README.md) を参考にしながら、各設定ファイルに情報を書き込んでください。
 2. 環境変数に設定する
    - 以下の表の通りに環境変数を設定してください。
 
@@ -71,7 +72,12 @@ Botの動作に必要な情報を設定する方法は2通りあります。
    | `SLACK_APP_TOKEN` | SlackアプリのApp-Level Token                       |
    | `SLACK_BOT_TOKEN` | SlackアプリのBot User OAuth Token                  |
 
-設定が終わったら以下のコマンドを実行します。情報を設定ファイルに記入したか環境変数に設定したかに応じて指定する引数を変更してください。
+設定が終わったら必要なPythonパッケージをインストールします。
+
+1. Python用PostgreSQLアダプタであるpsycopgのビルドに必要なパッケージを、[psycopgのBuild prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)を見ながらインストールしてください。
+2. `pip install -r requirements.txt` で必要なPythonパッケージをインストールしてください。
+
+最後に以下のコマンドを実行してBotを起動します。情報を設定ファイルに記入したか環境変数に設定したかに応じて指定する引数を変更してください。
 
 ```bash
 python ./run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_secret_config.json] --slackconfig [path-to-slack_secret_config.json]
@@ -91,3 +97,6 @@ python ./run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_sec
 1. セキュリティ事故を防ぐため、各種情報を環境変数に設定することを推奨します。各種PaaSのコントロールパネルにて、[コマンドラインからBotを起動するには](#コマンドラインからBotを起動するには)の表で示した環境変数を設定してください。
 
 2. このリポジトリのルートに置かれているDockerfileを用いてコンテナイメージをビルドし、デプロイしてください。
+
+> [!WARNING]
+> ほとんどのPaaSのランタイムにはpsycopgのビルドに必要なパッケージが既にインストールされていますが、もしされていない場合はpsycopgのビルドが失敗します。その場合は[コマンドラインからBotを起動するには](#コマンドラインからBotを起動するには)を参考にしながらランタイムにpsycopgのBuild prerequisitesをインストールしてください。
