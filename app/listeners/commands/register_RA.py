@@ -23,7 +23,7 @@ def register_RA_wrapper(bot_context: BotContext):
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=":x: `/register_ra <RA区分名>` のように実行してください。",
+                text=":x: Use this command like `/register_ra <Name of RA (e.g. CREST, NTT, ...)>`",
             )
             botctx.logger.info(
                 f"slack user {context.actor_user_id} executed /register_ra command with no argument"
@@ -39,7 +39,7 @@ def register_RA_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":x: `/init <氏名>` で先にユーザ登録を行ってください。",
+                    text=":x: You have to register first with `/init <Your Name>`.",
                 )
                 botctx.logger.info(
                     f"slack user {context.actor_user_id} executed /register_ra, but is not registered as bot user yet"
@@ -59,7 +59,7 @@ def register_RA_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":x: 何らかのデータベースエラーによりRAを登録できませんでした。",
+                    text=":x: Failed to register RA due to some database error.",
                 )
                 botctx.logger.exception(
                     f"failed to register RA {ra_name} for slack user {context.actor_user_id} due to a database error"
@@ -69,7 +69,7 @@ def register_RA_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f':white_check_mark: RA "{ra_name}" を登録しました。',
+                    text=f':white_check_mark: RA "{ra_name}" has been successfully registered.',
                 )
                 botctx.logger.info(
                     f"registered RA {ra_name} for slack user {context.actor_user_id}"

@@ -31,7 +31,7 @@ def download_csv_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":x: `/download_csv 2023/11` のように実行してください。",
+                    text=":x: Use this command like `/download_csv 2023/11`.",
                 )
                 botctx.logger.info(
                     f"slack user {context.actor_user_id} executed /download_csv with invalid argument: {year_month}"
@@ -59,7 +59,7 @@ def download_csv_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
+                    text=f':beach_with_umbrella: No work records found in {year_month if year_month else "this month"}',
                 )
                 botctx.logger.info(
                     f"found no work record in {date.year}/{date.month} for slack user {context.actor_user_id}"
@@ -99,7 +99,7 @@ def download_csv_wrapper(bot_context: BotContext):
         # upload the CSV and send user the URL to it
         client.files_upload_v2(
             channel=dm_with_the_user["channel"]["id"],
-            title=f"{date.year}/{date.month}の作業時間",
+            title=f"Work records in {date.year}/{date.month}",
             filename=f"{date.year}_{date.month}_working_hours.csv",
             content=csv_text,
         )
@@ -107,7 +107,7 @@ def download_csv_wrapper(bot_context: BotContext):
         client.chat_postEphemeral(
             channel=context.channel_id,
             user=context.actor_user_id,
-            text=":page_facing_up: DMにCSVファイルを送信しました。",
+            text=":page_facing_up: Sent you a CSV file in DM.",
         )
 
         botctx.logger.info(

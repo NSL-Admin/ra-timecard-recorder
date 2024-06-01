@@ -27,7 +27,7 @@ def init_wrapper(bot_context: BotContext):
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=":x: `/init <氏名>` のように実行してください。",
+                text=":x: Use this command like `/init <Your Name>`",
             )
             botctx.logger.info(
                 f"slack user {context.actor_user_id} executed /init command with no argument"
@@ -62,7 +62,7 @@ def init_wrapper(bot_context: BotContext):
                     client.chat_postEphemeral(
                         channel=context.channel_id,
                         user=context.actor_user_id,
-                        text=f":thinking_face: {username} さん、既にユーザ登録が完了しているようです。",
+                        text=f":thinking_face: Hi {username}, it seems you've been registered already.",
                     )
                     botctx.logger.info(
                         f"slack user {context.actor_user_id} executed /init, but is already registered as bot user"
@@ -72,7 +72,7 @@ def init_wrapper(bot_context: BotContext):
                     client.chat_postEphemeral(
                         channel=context.channel_id,
                         user=context.actor_user_id,
-                        text=":x: 何らかのデータベースエラーによりユーザ登録できませんでした。",
+                        text=":x: Failed to register due to some database error.",
                     )
                     botctx.logger.exception(
                         f"failed to register slack user {context.actor_user_id} as bot user due to a database error"
@@ -83,14 +83,14 @@ def init_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":email: このBotからのDMを確認してください。",
+                    text=":email: Check DM from this bot.",
                 )
                 dm_with_the_user = client.conversations_open(
                     users=context.actor_user_id
                 )
                 client.chat_postMessage(
                     channel=dm_with_the_user["channel"]["id"],
-                    text=f":white_check_mark: {username} さん、ようこそ！ユーザ登録が完了しました。\n:rocket: 上の「ホーム」タブを開いて使い方ガイドを読んでください！",
+                    text=f':white_check_mark: Hi {username}, you\'ve been successfully registered.\n:rocket: Open the "Home" tab above and read the usage guide!',
                     mrkdwn=True,
                 )
                 botctx.logger.info(

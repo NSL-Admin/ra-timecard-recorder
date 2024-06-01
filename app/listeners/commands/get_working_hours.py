@@ -30,7 +30,7 @@ def get_working_hours_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":x: `/get_working_hours 2023/11` のように実行してください。",
+                    text=":x: Use this command like `/get_working_hours 2023/11`.",
                 )
                 botctx.logger.info(
                     f"slack user {context.actor_user_id} executed /get_working_hours with invalid argument: {year_month}"
@@ -59,7 +59,7 @@ def get_working_hours_wrapper(bot_context: BotContext):
             ).all()
 
         if working_hours_of_all_RAs:
-            message = f':pencil: {year_month if year_month else "今月"}の稼働時間は以下の通りです。'
+            message = f':pencil: Work hours in {year_month if year_month else "this month"} are as follows:'
             for working_hour in working_hours_of_all_RAs:
                 ra_name, working_hours = working_hour._tuple()
                 total_seconds = working_hours.total_seconds()
@@ -75,7 +75,7 @@ def get_working_hours_wrapper(bot_context: BotContext):
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=f':beach_with_umbrella: {year_month if year_month else "今月"}の稼働時間はありません。',
+                text=f':beach_with_umbrella: No work records found in {year_month if year_month else "this month"}',
             )
             botctx.logger.info(
                 f"found no work record in {date.year}/{date.month} for slack user {context.actor_user_id}"

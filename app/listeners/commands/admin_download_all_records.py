@@ -27,7 +27,7 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=":x: あなたはこのコマンドを使うことができません。",
+                text=":x: You are not allowed to use this command.",
             )
             botctx.logger.info(
                 f"slack user {context.actor_user_id} tried to execute /admin_download_all_records, but is not allowed to"
@@ -42,7 +42,7 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":x: `/download_all_working_records 2023/11` のように実行してください。",
+                    text=":x: Use this command like `/download_all_working_records 2023/11`.",
                 )
                 botctx.logger.info(
                     f"slack user {context.actor_user_id} executed /admin_download_all_records with invalid argument: {year_month}"
@@ -69,7 +69,7 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f':beach_with_umbrella: {year_month if year_month else "今月"}の勤務記録はありません。',
+                    text=f':beach_with_umbrella: No work records found in {year_month if year_month else "this month"}',
                 )
                 botctx.logger.info(
                     f"found no work record in {date.year}/{date.month} for any user"
@@ -116,7 +116,7 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
         # upload the CSV and send user the URL to it
         client.files_upload_v2(
             channel=dm_with_the_user["channel"]["id"],
-            title=f"{date.year}/{date.month}の全ユーザの作業記録",
+            title=f"Work records of all users in {date.year}/{date.month}",
             filename=f"{date.year}_{date.month}_all_working_records.csv",
             content=csv_text.encode(
                 encoding="cp932"
@@ -126,7 +126,7 @@ def admin_download_all_records_wrapper(bot_context: BotContext):
         client.chat_postEphemeral(
             channel=context.channel_id,
             user=context.actor_user_id,
-            text=":page_facing_up: DMにCSVファイルを送信しました。",
+            text=":page_facing_up: Sent you a CSV file in DM.",
         )
 
         botctx.logger.info(
