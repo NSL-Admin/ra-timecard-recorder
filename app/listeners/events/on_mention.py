@@ -46,20 +46,20 @@ def on_mention_wrapper(bot_context: BotContext):
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=":x: 形式が不正です。以下の形式で入力してください",
+                text=":x: Your message is in incorrect format. Write it in the following format:",
                 blocks=[
                     SectionBlock(
                         text=MarkdownTextObject(
                             text=textwrap.dedent(
                                 """
-                                    :x: 形式が不正です。以下の形式で入力してください
+                                    :x: Your message is in incorrect format. Write it in the following format
 
                                     ```
-                                    @RA timecard recorder [任意のコメント(省略可)]
-                                    • あなたの氏名 (例: RA太郎)
-                                    • RA区分名 (例: NTTコム)
-                                    • 実働期間 (例: 2023/11/18 10:00-17:00 休憩01:00)
-                                    • 作業内容の説明 (例: データセットの確認)
+                                    @RA timecard recorder [arbitrary comment(can be blank)]
+                                    • <Your Name> (e.g. Tanaka Taro)
+                                    • <RA Name> (e.g. CREST)
+                                    • <Working Hour> (e.g. 2023/11/18 10:00-17:00 R01:00) "R01:00" means you took an hour recess.
+                                    • <Description of work> (e.g. analyzed CICIDS2017 dataset)
                                     ```
                                     """
                             )
@@ -69,7 +69,7 @@ def on_mention_wrapper(bot_context: BotContext):
                     ContextBlock(
                         elements=[
                             MarkdownTextObject(
-                                text=":bulb: 送ったメッセージを消して再投稿する必要はありません。編集して修正してください。"
+                                text=":bulb: You don't need to delete your message and send again. Instead, you can directly edit the message into correct format."
                             )
                         ]
                     ),
@@ -98,7 +98,7 @@ def on_mention_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f':x: あなたは "{ra_name}" という名称のRAを登録していないか、ユーザ登録を完了していません。',
+                    text=f":x: You've never registered RA named \"{ra_name}\", or you've not completed user registration.",
                 )
                 botctx.logger.info(
                     f"slack user {context.actor_user_id} sent work record for unknown RA: {ra_name}"
@@ -106,7 +106,7 @@ def on_mention_wrapper(bot_context: BotContext):
                 return
 
         user_id, ra_id, ra_name = user_ra_data._tuple()
-        expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( 休憩(?P<break_time>[0-9:]{5}))?$"
+        expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( R(?P<break_time>[0-9:]{5}))?$"
         date_matched = re.match(pattern=expected_duration_format, string=duration_str)
         if not date_matched or (date_matched and len(date_matched.groups()) < 3):
             client.chat_postEphemeral(
@@ -114,8 +114,8 @@ def on_mention_wrapper(bot_context: BotContext):
                 user=context.actor_user_id,
                 text=textwrap.dedent(
                     """
-                        :x: 実働期間の形式が不正です。次の形式で入力してください。"休憩" 以降は省略可能です。桁数や不要な空白等に注意してください。
-                        `2023/11/18 10:00-18:00 休憩01:00`
+                        :x: Working Hour is in incorrect format. Please write it in the following format. "Rxx:xx" can be omitted if you didn't take a recess.
+                        `2023/11/18 10:00-18:00 R01:00`
                     """
                 ),
             )
@@ -169,7 +169,7 @@ def on_mention_wrapper(bot_context: BotContext):
                     client.chat_postEphemeral(
                         channel=context.channel_id,
                         user=context.actor_user_id,
-                        text=":x: 何らかのデータベースエラーにより記録できませんでした。",
+                        text=":x: Failed to record your work due to some database error.",
                     )
                     botctx.logger.exception(
                         f"failed to record work by slack user {context.actor_user_id} for RA {ra_name} due to a database error"
@@ -180,12 +180,12 @@ def on_mention_wrapper(bot_context: BotContext):
                         channel=context.channel_id,
                         user=context.actor_user_id,
                         text=(
-                            f":white_check_mark: 作業を記録しました。\n"
-                            f"RA区分: {ra_name}\n"
-                            f"作業日時: {date_str} {start_time_str}-{end_time_str}\n"
-                            f"作業時間: {duration_time.hour:02}:{duration_time.minute:02}\n"
-                            f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
-                            f"作業内容: {description}"
+                            f":white_check_mark: Your work was recorded.\n"
+                            f"RA Name: {ra_name}\n"
+                            f"Work datetime: {date_str} {start_time_str}-{end_time_str}\n"
+                            f"Work hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
+                            f"Recess hours: {break_time.hour:02}:{break_time.minute:02}\n"
+                            f"Description of work: {description}"
                         ),
                     )
                     botctx.logger.info(
@@ -205,7 +205,7 @@ def on_mention_wrapper(bot_context: BotContext):
                     client.chat_postEphemeral(
                         channel=context.channel_id,
                         user=context.actor_user_id,
-                        text=":x: 何らかのデータベースエラーにより更新できませんでした。",
+                        text=":x: Failed to update your work record due to some database error.",
                     )
                     botctx.logger.exception(
                         f"failed to update work record by slack user {context.actor_user_id} for RA {ra_name} due to a database error"
@@ -216,12 +216,12 @@ def on_mention_wrapper(bot_context: BotContext):
                         channel=context.channel_id,
                         user=context.actor_user_id,
                         text=(
-                            f":white_check_mark: 作業を更新しました。\n"
-                            f"RA区分: {ra_name}\n"
-                            f"作業日時: {date_str} {start_time_str}-{end_time_str}\n"
-                            f"作業時間: {duration_time.hour:02}:{duration_time.minute:02}\n"
-                            f"休憩時間: {break_time.hour:02}:{break_time.minute:02}\n"
-                            f"作業内容: {description}"
+                            f":white_check_mark: Your work record was updated.\n"
+                            f"RA Name: {ra_name}\n"
+                            f"Work datetime: {date_str} {start_time_str}-{end_time_str}\n"
+                            f"Work hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
+                            f"Recess hours: {break_time.hour:02}:{break_time.minute:02}\n"
+                            f"Description of work: {description}"
                         ),
                     )
                     botctx.logger.info(

@@ -36,7 +36,7 @@ def on_message_delete_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":x: 何らかのデータベースエラーにより削除できませんでした。",
+                    text=":x: Failed to delete your work record due to some database error.",
                 )
                 botctx.logger.exception(
                     f"failed to delete work record whose ts is {deleted_slack_message_ts} by slack user {context.actor_user_id} due to a database error"
@@ -46,7 +46,7 @@ def on_message_delete_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f":wastebasket: {record_to_delete.start_time}から{record_to_delete.end_time}の作業記録を削除しました。",
+                    text=f":wastebasket: Deleted record of you work from {record_to_delete.start_time} to {record_to_delete.end_time}.",
                 )
                 botctx.logger.info(
                     f"deleted work record by slack user {context.actor_user_id} from {record_to_delete.start_time} to {record_to_delete.end_time}: {record_to_delete.description}"
