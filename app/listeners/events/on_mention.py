@@ -105,7 +105,7 @@ def on_mention_wrapper(bot_context: BotContext):
                 )
                 return
 
-        user_id, ra_id, ra_name = user_ra_data._tuple()
+        _, ra_id, ra_name = user_ra_data._tuple()
         # TODO: In `expected_duration_format`, currently both "R" and "休憩" is allowed to precede recess hours, to ensure backward compatibility.
         #       In future versions we're planning to only allow "R".
         expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( (休憩|R)(?P<break_time>[0-9:]{5}))?$"
