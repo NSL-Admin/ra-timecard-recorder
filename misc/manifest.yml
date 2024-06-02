@@ -1,6 +1,6 @@
 display_information:
   name: RA timecard recorder
-  description: RAの勤怠を記録し、簡単に確認可能にします
+  description: Record work hours of RAs
   background_color: "#001657"
 features:
   app_home:
@@ -12,23 +12,23 @@ features:
     always_online: true
   slash_commands:
     - command: /init
-      description: ユーザとして初期登録を行う
-      usage_hint: <氏名>
+      description: Register as a new user
+      usage_hint: <Your Name>
       should_escape: false
     - command: /register_ra
-      description: 新しくRAを登録する
-      usage_hint: <RA区分名>
+      description: Register a new RA job
+      usage_hint: <RA Name>
       should_escape: false
     - command: /get_working_hours
-      description: 今月の稼働時間を計算する
+      description: Check work hours in a month
       usage_hint: "[yyyy/mm]"
       should_escape: false
     - command: /download_csv
-      description: 作業記録をCSV形式でダウンロード
+      description: Download work records as a CSV file
       usage_hint: "[yyyy/mm]"
       should_escape: false
     - command: /admin_download_all_records
-      description: 【要権限】全てのユーザの勤務記録を出力します
+      description: "[Privilege Required] Download work records of all users"
       usage_hint: "[yyyy/mm]"
       should_escape: false
 oauth_config:
