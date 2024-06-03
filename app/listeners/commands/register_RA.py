@@ -23,7 +23,7 @@ def register_RA_wrapper(bot_context: BotContext):
             client.chat_postEphemeral(
                 channel=context.channel_id,
                 user=context.actor_user_id,
-                text=":x: Use this command like `/register_ra <Name of RA (e.g. CREST, NTT, ...)>`",
+                text=":x: Use this command like `/register_ra <RA Job Name (e.g. CREST, NTT, ...)>`",
             )
             botctx.logger.info(
                 f"slack user {context.actor_user_id} executed /register_ra command with no argument"
@@ -59,20 +59,20 @@ def register_RA_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=":x: Failed to register RA due to some database error.",
+                    text=":x: Failed to register RA Job due to some database error.",
                 )
                 botctx.logger.exception(
-                    f"failed to register RA {ra_name} for slack user {context.actor_user_id} due to a database error"
+                    f"failed to register RA Job {ra_name} for slack user {context.actor_user_id} due to a database error"
                 )
                 raise
             else:
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f':white_check_mark: RA "{ra_name}" has been successfully registered.',
+                    text=f':white_check_mark: RA Job "{ra_name}" has been successfully registered.',
                 )
                 botctx.logger.info(
-                    f"registered RA {ra_name} for slack user {context.actor_user_id}"
+                    f"registered RA Job {ra_name} for slack user {context.actor_user_id}"
                 )
 
     return register_RA

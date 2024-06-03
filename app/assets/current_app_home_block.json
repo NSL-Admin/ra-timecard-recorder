@@ -34,7 +34,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "2️⃣ 次に *`/register_ra <RA区分名>`* を実行してRAの登録をしてください。 `<RA区分名>` はSlack上で勤怠報告を行う際に記載するものと同じになるようにしてください！（例えば \"NTTコム\" や \"基盤A\" など）\nNext, you need to register your RA Name with *`/register_ra <RA Name>`*. `<RA Name>` should be the same as what you'll write in work report messages. (e.g. \"CREST\", \"NTT\")"
+                "text": "2️⃣ 次に *`/register_ra <RA区分名>`* を実行してRAの登録をしてください。 `<RA区分名>` はSlack上で勤怠報告を行う際に記載するものと同じになるようにしてください！（例えば \"NTTコム\" や \"基盤A\" など）\nNext, you need to register your RA Job Name with *`/register_ra <RA Job Name>`*. `<RA Job Name>` should be the same as what you'll write in work report messages. (e.g. \"KAKENHI\", \"CREST\", \"NTT\")"
             }
         },
         {
@@ -51,7 +51,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "RA Timecard Recorderをメンションする形で、以下のフォーマットに従ったメッセージを投稿してください！特に時刻のフォーマットに注意してください。 \nSend a message mentioning a bot in the following format. ```\n@RA timecard recorder [arbitrary comment(can be blank)]\n• <Your Name> (e.g. Tanaka Taro)\n• <RA Name> (e.g. CREST)\n• <Working Hour> (e.g. 2023/11/18 10:00-17:00)\n• <Description of work> (e.g. analyzed CICIDS2017 dataset)\n```:bulb: 休憩をした場合には、半角スペースに続けて `2023/11/18 15:00-21:00 R01:00` のように入力してください。\nFor example, if you took an hour recess during the working hour, write <Working Hour> in a format like `2023/11/18 15:00-21:00 R01:00`."
+                "text": "RA Timecard Recorderをメンションする形で、以下のフォーマットに従ったメッセージを投稿してください！特に時刻のフォーマットに注意してください。 \nSend a message mentioning a bot in the following format. ```\n@RA timecard recorder [arbitrary comment(can be blank)]\n• <Your Name> (e.g. Tanaka Taro)\n• <RA Job Name> (e.g. CREST)\n• <Working Hour> (e.g. 2023/11/18 10:00-17:00)\n• <Description of work> (e.g. analyzed CICIDS2017 dataset)\n```:bulb: 休憩をした場合には、半角スペースに続けて `2023/11/18 15:00-21:00 R01:00` のように入力してください。\nFor example, if you took an hour recess during the working hour, write <Working Hour> in a format like `2023/11/18 15:00-21:00 R01:00`."
             }
         },
         {

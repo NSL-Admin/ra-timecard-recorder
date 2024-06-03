@@ -17,7 +17,7 @@ features:
       should_escape: false
     - command: /register_ra
       description: Register a new RA job
-      usage_hint: <RA Name>
+      usage_hint: <RA Job Name>
       should_escape: false
     - command: /get_working_hours
       description: Check work hours in a month

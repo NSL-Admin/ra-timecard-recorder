@@ -57,7 +57,7 @@ def on_mention_wrapper(bot_context: BotContext):
                                     ```
                                     @RA timecard recorder [arbitrary comment(can be blank)]
                                     • <Your Name> (e.g. Tanaka Taro)
-                                    • <RA Name> (e.g. CREST)
+                                    • <RA Job Name> (e.g. CREST)
                                     • <Working Hour> (e.g. 2023/11/18 10:00-17:00 R01:00) "R01:00" means you took an hour recess.
                                     • <Description of work> (e.g. analyzed CICIDS2017 dataset)
                                     ```
@@ -98,10 +98,10 @@ def on_mention_wrapper(bot_context: BotContext):
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.actor_user_id,
-                    text=f":x: You've never registered RA named \"{ra_name}\", or you've not completed user registration.",
+                    text=f":x: You've never registered RA Job named \"{ra_name}\", or you've not completed user registration.",
                 )
                 botctx.logger.info(
-                    f"slack user {context.actor_user_id} sent work record for unknown RA: {ra_name}"
+                    f"slack user {context.actor_user_id} sent work record for unknown RA Job: {ra_name}"
                 )
                 return
 
@@ -174,7 +174,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         text=":x: Failed to record your work due to some database error.",
                     )
                     botctx.logger.exception(
-                        f"failed to record work by slack user {context.actor_user_id} for RA {ra_name} due to a database error"
+                        f"failed to record work by slack user {context.actor_user_id} for RA Job {ra_name} due to a database error"
                     )
                     raise
                 else:
@@ -183,7 +183,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         user=context.actor_user_id,
                         text=(
                             f":white_check_mark: Your work was recorded.\n"
-                            f"RA Name: {ra_name}\n"
+                            f"RA Job Name: {ra_name}\n"
                             f"Work datetime: {date_str} {start_time_str}-{end_time_str}\n"
                             f"Work hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
                             f"Recess hours: {break_time.hour:02}:{break_time.minute:02}\n"
@@ -191,7 +191,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         ),
                     )
                     botctx.logger.info(
-                        f"recorded work by slack user {context.actor_user_id} for RA {ra_name}: {description}"
+                        f"recorded work by slack user {context.actor_user_id} for RA Job {ra_name}: {description}"
                     )
             else:  # existing record was found, so update it
                 try:
@@ -210,7 +210,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         text=":x: Failed to update your work record due to some database error.",
                     )
                     botctx.logger.exception(
-                        f"failed to update work record by slack user {context.actor_user_id} for RA {ra_name} due to a database error"
+                        f"failed to update work record by slack user {context.actor_user_id} for RA Job {ra_name} due to a database error"
                     )
                     raise
                 else:
@@ -219,7 +219,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         user=context.actor_user_id,
                         text=(
                             f":white_check_mark: Your work record was updated.\n"
-                            f"RA Name: {ra_name}\n"
+                            f"RA Job Name: {ra_name}\n"
                             f"Work datetime: {date_str} {start_time_str}-{end_time_str}\n"
                             f"Work hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
                             f"Recess hours: {break_time.hour:02}:{break_time.minute:02}\n"
@@ -227,7 +227,7 @@ def on_mention_wrapper(bot_context: BotContext):
                         ),
                     )
                     botctx.logger.info(
-                        f"updated work record by slack user {context.actor_user_id} for RA {ra_name}: {description}"
+                        f"updated work record by slack user {context.actor_user_id} for RA Job {ra_name}: {description}"
                     )
 
     return on_mention
