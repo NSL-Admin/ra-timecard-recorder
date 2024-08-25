@@ -14,10 +14,6 @@ def on_message_delete_wrapper(bot_context: BotContext):
         if not (context.channel_id and context.actor_user_id):
             raise ValueError("something is wrong with `context` variable")
 
-        # check that the event is "message_delete" event
-        if "deleted_ts" not in event:
-            return
-
         deleted_slack_message_ts = event["deleted_ts"]
         with botctx.db_sessmaker() as sess:
             try:

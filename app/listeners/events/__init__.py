@@ -13,4 +13,6 @@ def register(app: App, bot_context: BotContext):
     # IMPORTANT: using `app.event("message")` multiple times will make the bot fail to register handlers but the first one.
     # DO NOT uncomment the below line if that activates more than one `app.event("message")`.
     # [^read the above message^] app.event("message")(on_message_update_wrapper(bot_context))
-    app.event("message")(on_message_delete_wrapper(bot_context))
+    app.event({"type": "message", "subtype": "message_deleted"})(
+        on_message_delete_wrapper(bot_context)
+    )
