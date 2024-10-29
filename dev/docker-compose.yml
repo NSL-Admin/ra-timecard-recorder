@@ -33,6 +33,7 @@ services:
       DB_PASSWORD: root
       DB_HOST: db
       DB_NAME: ra_timecard_recorder_dev_db
+      UV_PROJECT_ENVIRONMENT: /venv # create virtual environment in /venv inside the container
     depends_on:
       db:
         condition: service_healthy
