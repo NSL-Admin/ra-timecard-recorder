@@ -1,5 +1,0 @@
-SQLAlchemy
-python-dotenv
-slack_bolt
-psycopg2
-python-dateutil
