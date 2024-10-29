@@ -1,10 +1,12 @@
 # Dockerfile for deploying to PaaS platforms
 
-FROM python:3
+# use the latest python3.12-slim image with uv preinstalled
+FROM ghcr.io/astral-sh/uv:python3.12-alpine
 
 WORKDIR /usr/src/app
 
 COPY . .
-RUN pip install --no-cache-dir -r requirements.txt
+# install dependencies
+RUN uv sync
 
-CMD [ "python", "./run.py", "--botconfig", "./config/bot_config.json", "--bot_verbose"]
+CMD [ "uv", "run", "run.py", "--botconfig", "./config/bot_config.json", "--bot_verbose"]

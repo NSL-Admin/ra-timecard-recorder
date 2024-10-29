@@ -1,6 +1,5 @@
 # docker-compose to start development in local environment
 
-version: '3'
 services:
   db:
     image: postgres:latest
@@ -14,18 +13,18 @@ services:
     healthcheck:
       # check if the database is already created and ready to accept connections
       test: "PGPASSWORD=root psql -U root -d 'ra_timecard_recorder_dev_db' -c 'select 1;' 2>&1 > /dev/null"
-      interval: 5s
+      interval: 2s
 
   app:
     build:
-      # build container using Dockerfile, with context of parent directory
+      # build container using the context of the project root
       context: ..
-      dockerfile: ./Dockerfile
     container_name: ra_timecard_recorder_dev_app
     volumes:
       - type: bind
         source: ..
         target: /app
+    # note that working_dir below overrides WORKDIR in Dockerfile
     working_dir: /app
     links:
       - db:db
@@ -39,14 +38,5 @@ services:
         condition: service_healthy
     tty: true
     stdin_open: true
-    command:
-      [
-        "python",
-        "./run.py",
-        "--botconfig",
-        "./config/bot_config.json",
-        "--slackconfig",
-        "./config/slack_secret_config.json",
-        "--bot_verbose",
-        "--db_verbose"
-      ]
+    # note that command below overrides CMD in Dockerfile
+    command: [ "uv", "run", "./run.py", "--botconfig", "./config/bot_config.json", "--slackconfig", "./config/slack_secret_config.json", "--bot_verbose", "--db_verbose" ]
