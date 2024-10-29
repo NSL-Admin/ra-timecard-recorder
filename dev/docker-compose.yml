@@ -24,6 +24,7 @@ services:
       - type: bind
         source: ..
         target: /app
+    # note that working_dir below overrides WORKDIR in Dockerfile
     working_dir: /app
     links:
       - db:db
@@ -32,7 +33,6 @@ services:
       DB_PASSWORD: root
       DB_HOST: db
       DB_NAME: ra_timecard_recorder_dev_db
-      PATH: /root/.cargo/bin:${PATH} # to enable uv command
     depends_on:
       db:
         condition: service_healthy
