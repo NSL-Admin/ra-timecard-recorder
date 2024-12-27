@@ -3,6 +3,7 @@ from slack_bolt import App
 from ...context import BotContext
 from .on_mention import on_mention_wrapper
 from .on_message_delete import on_message_delete_wrapper
+from .on_message_events_to_ignore import on_message_events_to_ignore_handler
 
 # from .on_message_update import on_message_update_wrapper
 # TODO: register on_message_update after implementation is completed.
@@ -16,3 +17,5 @@ def register(app: App, bot_context: BotContext):
     app.event({"type": "message", "subtype": "message_deleted"})(
         on_message_delete_wrapper(bot_context)
     )
+    # ignore all "message" type events except those with "message_deleted" subtype (that is handled above).
+    app.event({"type": "message"})(on_message_events_to_ignore_handler)
