@@ -18,7 +18,7 @@ class User(Base):
     a model representing a user of the bot
     """
 
-    __tablename__ = "botuser"  # table name is changed because "botuser" is a reserved keyword in PostgreSQL
+    __tablename__ = "botuser"  # table name is changed because a table named "user" exists by default in Postgres
 
     # id will be automatically assigned by the database, so it should not be initialized in the constructor
     id: Mapped[int] = mapped_column(primary_key=True, init=False)
