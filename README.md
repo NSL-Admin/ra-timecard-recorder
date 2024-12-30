@@ -25,13 +25,13 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 
 ```
 @RA timecard recorder [任意のコメント(省略可)]
-• 氏名 (例: RA太郎)
-• RA区分名 (例: NTTコム)
-• 勤務時間 (例: 2023/11/18 15:00-21:00)
-• 勤務内容 (例: 学習用データセットの構築)
+• 氏名 (例: NameOfRA)
+• RA区分名 (例: 研究予算A)
+• 勤務時間 (例: 2024/12/30 09:00-18:00 R01:00)
+• 勤務内容 (例: データセットの作成と評価)
 ```
 
-<img src="https://github.com/NSL-Admin/ra-timecard-recorder/assets/37496476/fe550e8f-e67c-404f-9ff6-b6c4f65d11cd" height=60% width=60%>
+<img src="https://github.com/user-attachments/assets/780c6990-a721-47a1-8c7c-6bf916fff034" height=60% width=60%>
 
 注意:
 - 勤務時間の行の時刻情報は、時・分ともに2桁ずつ記入してください。
@@ -51,16 +51,18 @@ Botが参加しているチャンネルにおいて、このBotをメンショ�
 1. `/get_working_hours [yyyy/mm]` を実行すると yyyy/mm (例: 2023/11)の勤務時間を確認することができます。年月を省略した場合、今月の勤務時間が表示されます。
 2. `/download_csv [yyyy/mm]` を実行すると yyyy/mm (例: 2023/11)の勤務記録をCSVファイル形式でダウンロードすることができます。年月を省略した場合、今月の勤務記録がダウンロードされます。
 
-## コマンドラインからBotを起動するには
+## Botを本番環境で運用するには
 
 > [!TIP]
-> ローカル環境で開発を始めようとしている場合は、[`/dev`](/dev) のREADMEを読んでください。
+> あなたが開発者で、ローカル環境でこのBotの開発を始めようとしている場合は、[`/dev`](/dev) のREADMEを読んでください。
+
+### コマンドラインから起動する場合
 
 Botの動作に必要な情報を設定する方法は2通りあります。
 
 1. [`/config`](/config) 内の各設定ファイルを用いて設定する
    - [`/config`](/config) のREADMEを参考にしながら、各設定ファイルに情報を書き込んでください。
-1. 環境変数に設定する
+2. 環境変数に設定する
    - 以下の表の通りに環境変数を設定してください。
 
    | 変数名            | 説明                                               |
@@ -74,13 +76,13 @@ Botの動作に必要な情報を設定する方法は2通りあります。
 
 設定が終わったら必要なPythonパッケージをインストールします。
 
-1. Python用PostgreSQLアダプタであるpsycopgのビルドに必要なパッケージを、[psycopgのBuild prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)を見ながらインストールしてください。
-2. `pip install -r requirements.txt` で必要なPythonパッケージをインストールしてください。
+1. Pythonのプロジェクト管理ツールである[uv](https://docs.astral.sh/uv)をインストールしてください。
+2. リポジトリルートで `uv sync` を実行して、Botを動かすための仮想環境を準備してください。
 
 最後に以下のコマンドを実行してBotを起動します。情報を設定ファイルに記入したか環境変数に設定したかに応じて指定する引数を変更してください。
 
 ```bash
-python ./run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_secret_config.json] --slackconfig [path-to-slack_secret_config.json]
+uv run run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_secret_config.json] --slackconfig [path-to-slack_secret_config.json]
 ```
 
 | 引数名          | 説明                              | 必須    | 備考                          |
@@ -89,14 +91,11 @@ python ./run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_sec
 | `--dbconfig`    | DB接続情報設定ファイルへのパス    |  いいえ | 省略時は環境変数が参照される |
 | `--slackconfig` | Slack資格情報設定ファイルへのパス |  いいえ | 省略時は環境変数が参照される |
 
-## 本番環境にデプロイするには
+### PaaSにデプロイする場合
 
 このリポジトリ内のコードはすぐに[fly.io](https://fly.io)にデプロイ出来るようになっています。
 また、mainブランチにPull Requestをマージすることでfly.ioへのデプロイが自動的に行われます。
 
-1. セキュリティ事故を防ぐため、各種情報を環境変数に設定することを推奨します。各種PaaSのコントロールパネルにて、[コマンドラインからBotを起動するには](#コマンドラインからBotを起動するには)の表で示した環境変数を設定してください。
+1. セキュリティ事故を防ぐため、各種情報は環境変数として設定してください。各種PaaSのコントロールパネルにて、[コマンドラインから起動する場合](#コマンドラインから起動する場合)の表で示した環境変数を設定してください。
 
 2. このリポジトリのルートに置かれているDockerfileを用いてコンテナイメージをビルドし、デプロイしてください。
-
-> [!WARNING]
-> ほとんどのPaaSのランタイムにはpsycopgのビルドに必要なパッケージが既にインストールされていますが、もしされていない場合はpsycopgのビルドが失敗します。その場合は[コマンドラインからBotを起動するには](#コマンドラインからBotを起動するには)を参考にしながらランタイムにpsycopgのBuild prerequisitesをインストールしてください。
