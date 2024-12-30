@@ -9,6 +9,15 @@ from app.context import BotContext
 from app.db.setup import setup_db_and_get_sessionmaker
 from app.listeners import register_listeners
 
+
+class Args(argparse.Namespace):
+    botconfig: str
+    dbconfig: str
+    slackconfig: str
+    bot_verbose: bool
+    db_verbose: bool
+
+
 parser = argparse.ArgumentParser(description="Launch RA timecard recorder")
 parser.add_argument(
     "--botconfig", help="JSON file containing bot configuration", required=True
@@ -31,7 +40,7 @@ parser.add_argument(
 )
 
 if __name__ == "__main__":
-    args = parser.parse_args()
+    args = parser.parse_args(namespace=Args())
 
     ### globally enable logging (to stdout) ###
     logging.basicConfig()

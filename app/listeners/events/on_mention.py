@@ -185,7 +185,7 @@ def on_mention_wrapper(bot_context: BotContext):
                             f":white_check_mark: Your work was recorded.\n"
                             f"RA Job Name: {ra_name}\n"
                             f"Work datetime: {date_str} {start_time_str}-{end_time_str}\n"
-                            f"Work hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
+                            f"Attendance hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
                             f"Recess hours: {break_time.hour:02}:{break_time.minute:02}\n"
                             f"Description of work: {description}"
                         ),
@@ -221,7 +221,7 @@ def on_mention_wrapper(bot_context: BotContext):
                             f":white_check_mark: Your work record was updated.\n"
                             f"RA Job Name: {ra_name}\n"
                             f"Work datetime: {date_str} {start_time_str}-{end_time_str}\n"
-                            f"Work hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
+                            f"Attendance hours: {duration_time.hour:02}:{duration_time.minute:02}\n"
                             f"Recess hours: {break_time.hour:02}:{break_time.minute:02}\n"
                             f"Description of work: {description}"
                         ),
