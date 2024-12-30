@@ -20,11 +20,13 @@ services:
       # build container using the context of the project root
       context: ..
     container_name: ra_timecard_recorder_dev_app
+    # NOTE: Be sure to bind-mount the project root, since the config files containing secrets
+    # are dockerignored and not in the Docker image, thus should be read from the host directory.
     volumes:
       - type: bind
         source: ..
         target: /app
-    # note that working_dir below overrides WORKDIR in Dockerfile
+    # note that working_dir below overrides WORKDIR in Dockerfile (only during runtime. when launched using docker-compose)
     working_dir: /app
     links:
       - db:db
@@ -39,5 +41,5 @@ services:
         condition: service_healthy
     tty: true
     stdin_open: true
-    # note that command below overrides CMD in Dockerfile
+    # note that command below overrides CMD in Dockerfile (when launched using docker-compose)
     command: [ "uv", "run", "./run.py", "--botconfig", "./config/bot_config.json", "--slackconfig", "./config/slack_secret_config.json", "--bot_verbose", "--db_verbose" ]
