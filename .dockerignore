@@ -6,6 +6,8 @@
 # utils for development
 **/dev
 **/misc
+config/db_secret_config.json
+config/slack_secret_config.json
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
