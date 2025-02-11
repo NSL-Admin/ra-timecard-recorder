@@ -3,6 +3,10 @@
 # use the latest python3.12-slim image with uv preinstalled
 FROM ghcr.io/astral-sh/uv:python3.12-alpine
 
+RUN apk --no-cache add tzdata && \
+    cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
+    apk del tzdata
+
 WORKDIR /usr/src/app
 
 COPY . .
