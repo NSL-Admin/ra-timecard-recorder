@@ -14,6 +14,7 @@ from sqlalchemy import select
 
 from ...context import BotContext
 from ...db.model import RA, TimeCard, User
+from ...workrules import WorkRules
 
 
 def on_mention_wrapper(bot_context: BotContext):
@@ -152,7 +153,7 @@ def on_mention_wrapper(bot_context: BotContext):
             record = sess.execute(
                 select(TimeCard).where(TimeCard.slack_message_ts == slack_message_ts)
             ).scalar_one_or_none()
-            if not record:  # existing record was not found, so try to add new one
+            if not record:  # existing record was not found, let's try to add new one
                 try:
                     new_record = TimeCard(
                         ra_id=ra_id,
@@ -193,7 +194,16 @@ def on_mention_wrapper(bot_context: BotContext):
                     botctx.logger.info(
                         f"recorded work by slack user {context.actor_user_id} for RA Job {ra_name}: {description}"
                     )
-            else:  # existing record was found, so update it
+                    # send warnings, if any.
+                    for warning in WorkRules.generate_warnings_about_all_rules(
+                        record=new_record
+                    ):
+                        client.chat_postEphemeral(
+                            channel=context.channel_id,
+                            user=context.actor_user_id,
+                            text=warning,
+                        )
+            else:  # existing record was found, let's update it
                 try:
                     record.start_time = start_dt
                     record.end_time = end_dt
@@ -229,5 +239,14 @@ def on_mention_wrapper(bot_context: BotContext):
                     botctx.logger.info(
                         f"updated work record by slack user {context.actor_user_id} for RA Job {ra_name}: {description}"
                     )
+                    # send warnings, if any.
+                    for warning in WorkRules.generate_warnings_about_all_rules(
+                        record=record
+                    ):
+                        client.chat_postEphemeral(
+                            channel=context.channel_id,
+                            user=context.actor_user_id,
+                            text=warning,
+                        )
 
     return on_mention
