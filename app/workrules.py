@@ -19,10 +19,10 @@ class WorkRules:
             Optional[str]: returns a warning message if recess hours are too short.
         """
 
-        if record.duration >= datetime.time(
+        if record.duration > datetime.time(
             hour=6
         ) and record.break_duration < datetime.time(hour=1):
-            return ":warning: Recess hours are too short. If you work more than or equal to 6 hours, you must take 1 hour's recess."
+            return ":warning: Recess hours are too short. If you work more than 6 hours, you must take 1 hour's recess."
 
     @classmethod
     def generate_warning_about_report_timing(cls, record: TimeCard) -> Optional[str]:
