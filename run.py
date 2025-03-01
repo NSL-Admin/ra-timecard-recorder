@@ -3,6 +3,8 @@ import logging
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
+import sentry_sdk
+import os
 
 from app.config import BotConfig, DBConfig, SlackConfig
 from app.context import BotContext
@@ -38,6 +40,9 @@ parser.add_argument(
 parser.add_argument(
     "--db_verbose", help="Enable verbose logging from SQLAlchemy", action="store_true"
 )
+parser.add_argument(
+    "--use-sentry", help="Send errors and metrics to Sentry. DSN should be set in environmental variable SENTRY_DSN", action="store_true"
+)
 
 if __name__ == "__main__":
     args = parser.parse_args(namespace=Args())
@@ -51,6 +56,18 @@ if __name__ == "__main__":
         logger.setLevel(logging.INFO)
     else:
         logger.setLevel(logging.WARNING)
+
+    ### set up sentry for monitoring in production ###
+    if args.use_sentry:
+        if sentry_dsn := os.getenv("SENTRY_DSN"):
+            sentry_sdk.init(
+                dsn=sentry_dsn,
+                send_default_pii=True,
+                traces_sample_rate=1.0,
+                profiles_sample_rate=1.0,
+            )
+        else:
+            raise ValueError("Environment variable SENTRY_DSN is not set")
 
     ### load config ###
     # load config file for bot
