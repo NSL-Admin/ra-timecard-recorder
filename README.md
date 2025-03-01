@@ -100,7 +100,7 @@ uv run run.py --botconfig <path-to-bot_config.json> --dbconfig [path-to-db_secre
 
 2. このリポジトリのルートに置かれているDockerfileを用いてコンテナイメージをビルドし、デプロイしてください。必要に応じてDockerfile末尾のCMDを変更してください。
 
-### (Optional) Sentryによるモニタリングを有効化する
+### (Optional) 本番環境においてSentryによるモニタリングを有効化する
 
 Sentryを使うとBotの実行時に発生したエラーをモニタリングすることができます。[fly.io上のアプリケーションはSentryとシームレスに連携することが可能](https://fly.io/docs/monitoring/sentry/)ですので、運用の効率化のためにも使用することをおすすめします。
 
