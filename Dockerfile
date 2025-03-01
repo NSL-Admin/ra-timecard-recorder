@@ -13,4 +13,5 @@ COPY . .
 # install dependencies
 RUN uv sync
 
-CMD [ "uv", "run", "run.py", "--botconfig", "./config/bot_config.json", "--bot_verbose"]
+# command for production
+CMD [ "uv", "run", "run.py", "--botconfig", "./config/bot_config.json", "--bot_verbose", "--use-sentry"]
