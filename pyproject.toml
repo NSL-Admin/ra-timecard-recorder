@@ -9,5 +9,5 @@ dependencies = [
     "python-dateutil>=2.9.0.post0",
     "sentry-sdk>=2.22.0",
     "slack-bolt>=1.22.0",
-    "sqlalchemy>=2.0.36",
+    "sqlalchemy>=2.0.38",
 ]
