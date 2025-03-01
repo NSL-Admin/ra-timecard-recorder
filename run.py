@@ -66,6 +66,7 @@ if __name__ == "__main__":
                 traces_sample_rate=1.0,
                 profiles_sample_rate=1.0,
             )
+            logger.info("monitoring with Sentry has been started")
         else:
             raise ValueError("Environment variable SENTRY_DSN is not set")
 
