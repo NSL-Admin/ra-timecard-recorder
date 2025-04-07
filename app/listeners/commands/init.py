@@ -34,7 +34,22 @@ def init_wrapper(bot_context: BotContext):
             )
             return
 
-        with botctx.db_sessmaker() as sess:  # with `with` statement, sess.close() is not needed
+        # check that username doesn't contain redundant prefix/suffix
+        REDUNDANT_CHARS = ["<", ">", "*"]
+        if username[0] in REDUNDANT_CHARS or username[-1] in REDUNDANT_CHARS:
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=":x: Don't enclose your name between symbols",
+            )
+            botctx.logger.info(
+                f"slack user {context.actor_user_id} executed /init command enclosing their name in symbols: {username}"
+            )
+            return
+
+        with (
+            botctx.db_sessmaker() as sess
+        ):  # with `with` statement, sess.close() is not needed
             try:
                 # add the user to the database
                 user = User(
