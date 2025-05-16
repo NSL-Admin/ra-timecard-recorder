@@ -106,10 +106,8 @@ def on_mention_wrapper(bot_context: BotContext):
                 )
                 return
 
-        _, ra_id, ra_name = user_ra_data._tuple()
-        # TODO: In `expected_duration_format`, currently both "R" and "休憩" is allowed to precede recess hours, to ensure backward compatibility.
-        #       In future versions we're planning to only allow "R".
-        expected_duration_format = r"(?P<date>.+) (?P<start_time>.{5})-(?P<end_time>.{5})( R(?P<break_time>[0-9:]{5}))?$"
+        _, ra_id, _ = user_ra_data._tuple()
+        expected_duration_format = r"(?P<date>[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}) (?P<start_time>[0-9]{1,2}:[0-9]{2})-(?P<end_time>[0-9]{1,2}:[0-9]{2})( R(?P<break_time>[0-9]{1,2}:[0-9]{2}))?$"
         date_matched = re.match(pattern=expected_duration_format, string=duration_str)
         if not date_matched or (date_matched and len(date_matched.groups()) < 3):
             client.chat_postEphemeral(
