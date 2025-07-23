@@ -130,21 +130,36 @@ def on_mention_wrapper(bot_context: BotContext):
         start_time_str = date_matched.group("start_time")
         end_time_str = date_matched.group("end_time")
         break_time_str_or_none = date_matched.group("break_time")
-        # convert string to datetime type
-        date_format = "%Y/%m/%d %H:%M"
-        start_dt = datetime.datetime.strptime(
-            f"{date_str} {start_time_str}", date_format
-        )
-        end_dt = datetime.datetime.strptime(f"{date_str} {end_time_str}", date_format)
-        duration_time = (
-            datetime.datetime.min + (end_dt - start_dt)
-        ).time()  # convert timedelta to Time
-        if break_time_str_or_none:
-            # since `time` type has no equivalent to strptime, this dirty workaround is needed...
-            break_time = datetime.datetime.strptime(break_time_str_or_none, "%H:%M")
-            break_time = datetime.time(hour=break_time.hour, minute=break_time.minute)
-        else:
-            break_time = datetime.time(hour=0, minute=0)
+        try:
+            # convert string to datetime type
+            date_format = "%Y/%m/%d %H:%M"
+            start_dt = datetime.datetime.strptime(
+                f"{date_str} {start_time_str}", date_format
+            )
+            end_dt = datetime.datetime.strptime(
+                f"{date_str} {end_time_str}", date_format
+            )
+            duration_time = (
+                datetime.datetime.min + (end_dt - start_dt)
+            ).time()  # convert timedelta to Time
+            if break_time_str_or_none:
+                # since `time` type has no equivalent to strptime, this dirty workaround is needed...
+                break_time = datetime.datetime.strptime(break_time_str_or_none, "%H:%M")
+                break_time = datetime.time(
+                    hour=break_time.hour, minute=break_time.minute
+                )
+            else:
+                break_time = datetime.time(hour=0, minute=0)
+        except Exception:
+            client.chat_postEphemeral(
+                channel=context.channel_id,
+                user=context.actor_user_id,
+                text=":x: There are invalid values in the working hours.",
+            )
+            botctx.logger.info(
+                f"slack user {context.actor_user_id} sent work record including invalid datetime values"
+            )
+            return
 
         # add a new record or update existing one
         with botctx.db_sessmaker() as sess:
