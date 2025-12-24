@@ -5,9 +5,9 @@ description = "Slack Bot that enables RAs to easily record and retrieve timecard
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "psycopg2-binary>=2.9.10",
+    "psycopg2-binary>=2.9.11",
     "python-dateutil>=2.9.0.post0",
-    "sentry-sdk>=2.25.1",
-    "slack-bolt>=1.23.0",
-    "sqlalchemy>=2.0.40",
+    "sentry-sdk>=2.48.0",
+    "slack-bolt>=1.27.0",
+    "sqlalchemy>=2.0.45",
 ]
